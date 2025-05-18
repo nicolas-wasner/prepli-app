@@ -1,0 +1,5 @@
+/includes/config.php
+/vendor/
+/node_modules/
+/*.zip
+*.log
