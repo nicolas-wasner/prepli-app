@@ -10,8 +10,10 @@ if (!isset($_SESSION['utilisateur_id'])) {
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $stmt = $pdo->prepare("INSERT INTO fiches (domaine, niveau, duree, sequence, seance, objectifs, competences, prerequis, nom_enseignant, materiel, deroulement, consignes, evaluation, differenciation, remarques, utilisateur_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  $stmt = $pdo->prepare("INSERT INTO fiches (
+    domaine, niveau, duree, sequence, seance, objectifs, competences,
+    prerequis, nom_enseignant, deroulement_json, utilisateur_id
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
   $stmt->execute([
     $_POST['domaine'],
@@ -23,12 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_POST['competences'],
     $_POST['prerequis'],
     $_POST['nom_enseignant'],
-    $_POST['materiel'],
-    $_POST['deroulement'],
-    $_POST['consignes'],
-    $_POST['evaluation'],
-    $_POST['differenciation'],
-    $_POST['remarques'],
+    $_POST['deroulement_json'],
     $_SESSION['utilisateur_id']
   ]);
 
@@ -60,15 +57,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <textarea name="prerequis" placeholder="Prérequis" required></textarea>
       <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required>
 
-      <textarea name="materiel" placeholder="Matériel nécessaire"></textarea>
-      <textarea name="deroulement" placeholder="Déroulement ou étapes de la séance"></textarea>
-      <textarea name="consignes" placeholder="Consignes données aux élèves"></textarea>
-      <textarea name="evaluation" placeholder="Modalités d’évaluation ou trace écrite"></textarea>
-      <textarea name="differenciation" placeholder="Différenciation possible"></textarea>
-      <textarea name="remarques" placeholder="Commentaires / remarques"></textarea>
+      <h3>Déroulement de la séance</h3>
+      <table id="deroulement-table" border="1" cellpadding="4" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th>Phase & durée</th>
+            <th>Déroulement</th>
+            <th>Consigne</th>
+            <th>Rôle enseignant</th>
+            <th>Rôle élève</th>
+            <th>Différenciation</th>
+            <th>Matériel</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
+      <input type="hidden" name="deroulement_json" id="deroulement_json">
 
       <button type="submit">💾 Enregistrer</button>
     </form>
   </div>
+
+  <script>
+    function addDeroulementRow(data = {}) {
+      const table = document.querySelector('#deroulement-table tbody');
+      const row = document.createElement('tr');
+      const champs = ['phase', 'deroulement', 'consignes', 'role_enseignant', 'role_eleve', 'differenciation', 'materiel'];
+      champs.forEach(name => {
+        const cell = document.createElement('td');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = name + '[]';
+        input.value = data[name] || '';
+        cell.appendChild(input);
+        row.appendChild(cell);
+      });
+      const remove = document.createElement('td');
+      remove.innerHTML = '<button type="button" onclick="this.closest(\'tr\').remove()">🗑️</button>';
+      row.appendChild(remove);
+      table.appendChild(row);
+    }
+
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const rows = document.querySelectorAll('#deroulement-table tbody tr');
+      const data = [];
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const item = {};
+        inputs.forEach(input => {
+          item[input.name.replace('[]', '')] = input.value;
+        });
+        data.push(item);
+      });
+      document.getElementById('deroulement_json').value = JSON.stringify(data);
+    });
+  </script>
 </body>
 </html>
