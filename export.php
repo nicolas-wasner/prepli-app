@@ -2,13 +2,18 @@
 session_start();
 require_once __DIR__ . '/includes/config.php';
 
-ini_set('display_errors', 0);
-error_reporting(E_ALL & ~E_DEPRECATED);
+//ini_set('display_errors', 0);
+//error_reporting(E_ALL & ~E_DEPRECATED);
 
-if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
-  exit;
-}
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
+require_once __DIR__ . '/includes/phpword/src/PhpWord/Autoloader.php';
+\PhpOffice\PhpWord\Autoloader::register();
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
 
 $id = (int) ($_GET['id'] ?? 0);
 $format = $_GET['format'] ?? 'pdf';
@@ -17,114 +22,164 @@ $stmt = $pdo->prepare("SELECT * FROM fiches WHERE id = ? AND utilisateur_id = ?"
 $stmt->execute([$id, $_SESSION['utilisateur_id']]);
 $fiche = $stmt->fetch();
 
-if (!$fiche) {
-  exit("❌ Fiche introuvable.");
-}
+if (!$fiche) exit("Fiche introuvable");
 
 function champ($f, $cle) {
   return nl2br(htmlspecialchars((string) ($f[$cle] ?? '')));
 }
-
 $deroulements = json_decode($fiche['deroulement_json'] ?? '[]', true);
 
-// === PDF EXPORT ===
+// PDF
 if ($format === 'pdf') {
-  require_once __DIR__ . '/includes/tcpdf/tcpdf.php';
+    require_once __DIR__ . '/includes/tcpdf/tcpdf.php';
 
-  $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
-  $pdf->SetMargins(15, 20, 15);
-  $pdf->AddPage();
-  $pdf->SetFont('dejavusans', '', 10);
+    // Création du PDF
+    $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+    $pdf->SetCreator(PDF_CREATOR);
+    $pdf->SetAuthor('Prepli');
+    $pdf->SetTitle('Fiche de préparation');
+    $pdf->SetMargins(10, 10, 10);
+    $pdf->SetAutoPageBreak(TRUE, 10);
+    $pdf->AddPage();
 
-  $html = '<h2 style="text-align:center;">Fiche de préparation de séance</h2>
-  <table border="1" cellpadding="5" cellspacing="0" width="100%">
-    <tr><th width="25%">Domaine</th><td>' . champ($fiche, 'domaine') . '</td></tr>
-    <tr><th>Niveau</th><td>' . champ($fiche, 'niveau') . '</td></tr>
-    <tr><th>Durée</th><td>' . champ($fiche, 'duree') . '</td></tr>
-    <tr><th>Séquence</th><td>' . champ($fiche, 'sequence') . '</td></tr>
-    <tr><th>Séance</th><td>' . champ($fiche, 'seance') . '</td></tr>
-    <tr><th>Objectifs</th><td>' . champ($fiche, 'objectifs') . '</td></tr>
-    <tr><th>Compétences</th><td>' . champ($fiche, 'competences') . '</td></tr>
-    <tr><th>Prérequis</th><td>' . champ($fiche, 'prerequis') . '</td></tr>
-  </table><br>';
+    $pdf->SetFont('helvetica', 'B', 14);
+    $pdf->Cell(0, 10, "Fiche de préparation de séance", 0, 1, 'C');
+    $pdf->Ln(3);
 
-  $html .= '<h3>Déroulement de la séance</h3>
-  <table border="1" cellpadding="4" cellspacing="0" width="100%">
-    <thead>
-      <tr style="background-color:#f0f0f0;">
-        <th>Phase & durée</th><th>Déroulement</th><th>Consigne</th>
-        <th>Rôle enseignant</th><th>Rôle élève</th><th>Différenciation</th><th>Matériel</th>
-      </tr>
-    </thead><tbody>';
+    $pdf->SetFont('helvetica', '', 10);
 
-  foreach ($deroulements as $ligne) {
-    $html .= '<tr>';
-    foreach (['phase','deroulement','consignes','role_enseignant','role_eleve','differenciation','materiel'] as $cle) {
-      $html .= '<td>' . nl2br(htmlspecialchars((string) ($ligne[$cle] ?? ''))) . '</td>';
+    // Infos générales (3x3)
+    $html = '<table border="1" cellpadding="4">';
+    $rows = [
+        ['Domaine d’apprentissage' => $fiche['domaine'], 'Niveau' => $fiche['niveau'], 'Durée totale de la séance' => $fiche['duree']],
+        ['Place de la séance dans la séquence' => $fiche['sequence'], 'Titre de la séquence' => $fiche['sequence'], 'Titre de la séance' => $fiche['seance']],
+        ['Objectif(s) visé(s)' => $fiche['objectifs'], 'Compétence(s) visée(s)' => $fiche['competences'], 'Prérequis' => $fiche['prerequis']],
+    ];
+    foreach ($rows as $row) {
+        $html .= '<tr>';
+        foreach ($row as $label => $val) {
+            $html .= '<td><strong>' . htmlspecialchars($label) . '</strong><br>' . nl2br(htmlspecialchars($val)) . '</td>';
+        }
+        $html .= '</tr>';
+    }
+    $html .= '</table><br>';
+
+    // Prérequis
+    $html .= '<table border="1" cellpadding="4"><tr><td><strong>AFC :</strong><br>' . nl2br(htmlspecialchars($fiche['afc'])) . '</td></tr></table><br>';
+
+    // Déroulement de la séance
+    $html .= '<h3>Déroulement de la séance</h3>';
+    $html .= '<table border="1" cellpadding="4"><tr>';
+    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l’enseignant", "Rôle de l’élève", "Différenciation", "Matériel"];
+    foreach ($headers as $h) {
+        $html .= '<th>' . htmlspecialchars($h) . '</th>';
     }
     $html .= '</tr>';
-  }
-
-  $html .= '</tbody></table><br>';
-
-  $html .= '<p><strong>Nom de l’enseignant :</strong><br>' . champ($fiche, 'nom_enseignant') . '</p>';
-
-  $pdf->writeHTML($html, true, false, true, false, '');
-  $pdf->Output("fiche_{$fiche['id']}.pdf", 'D');
-  exit;
-}
-
-// === WORD EXPORT ===
-if ($format === 'word') {
-  require_once __DIR__ . '/includes/phpword/bootstrap.php';
-  use PhpOffice\PhpWord\PhpWord;
-  use PhpOffice\PhpWord\IOFactory;
-
-  $word = new PhpWord();
-  $section = $word->addSection(['orientation' => 'landscape']);
-  $word->addTableStyle('MainTable', ['borderSize' => 6, 'borderColor' => '999999', 'cellMargin' => 80], ['bgColor' => 'f0f0f0']);
-
-  $section->addText("Fiche de préparation de séance", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
-  $section->addTextBreak(1);
-
-  $table = $section->addTable('MainTable');
-  $infos = [
-    'Domaine' => 'domaine', 'Niveau' => 'niveau', 'Durée' => 'duree',
-    'Séquence' => 'sequence', 'Séance' => 'seance',
-    'Objectifs' => 'objectifs', 'Compétences' => 'competences', 'Prérequis' => 'prerequis'
-  ];
-  foreach ($infos as $label => $cle) {
-    $table->addRow();
-    $table->addCell(3000)->addText($label, ['bold' => true]);
-    $table->addCell(12000)->addText((string) ($fiche[$cle] ?? ''));
-  }
-
-  $section->addTextBreak(1);
-  $section->addText("Déroulement de la séance", ['bold' => true, 'size' => 12]);
-
-  $table = $section->addTable('MainTable');
-  $cols = ['Phase & durée', 'Déroulement', 'Consigne', 'Rôle enseignant', 'Rôle élève', 'Différenciation', 'Matériel'];
-  $keys = ['phase', 'deroulement', 'consignes', 'role_enseignant', 'role_eleve', 'differenciation', 'materiel'];
-
-  $table->addRow();
-  foreach ($cols as $col) $table->addCell()->addText($col, ['bold' => true]);
-
-  foreach ($deroulements as $ligne) {
-    $table->addRow();
-    foreach ($keys as $k) {
-      $table->addCell()->addText((string) ($ligne[$k] ?? ''));
+    foreach ($deroulements as $l) {
+        $html .= '<tr>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['phase'])) . '</td>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['deroulement'])) . '</td>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['consignes'])) . '</td>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['role_enseignant'])) . '</td>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['role_eleve'])) . '</td>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['differenciation'])) . '</td>';
+        $html .= '<td>' . nl2br(htmlspecialchars($l['materiel'])) . '</td>';
+        $html .= '</tr>';
     }
-  }
+    $html .= '</table><br>';
 
-  $section->addTextBreak(1);
-  $section->addText("Nom de l’enseignant :", ['bold' => true]);
-  $section->addText((string) $fiche['nom_enseignant']);
+    // Blocs finaux
+    $finals = [
+        "Modalités d’évaluation" => 'evaluation',
+        "Bilan pédagogique et didactique" => 'bilan',
+        "Prolongement(s) possible(s)" => 'prolongement',
+        "Remédiation(s) éventuelle(s)" => 'remediation',
+        "Nom / Prénom de l’enseignant" => 'nom_enseignant',
+    ];
+    foreach ($finals as $label => $key) {
+        $html .= '<table border="1" cellpadding="4"><tr><td><strong>' . htmlspecialchars($label) . ' :</strong><br>' . nl2br(htmlspecialchars($fiche[$key])) . '</td></tr></table><br>';
+    }
 
-  header("Content-Description: File Transfer");
-  header('Content-Disposition: attachment; filename="fiche_' . $fiche['id'] . '.docx"');
-  header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    // Rendu HTML dans le PDF
+    $pdf->writeHTML($html, true, false, true, false, '');
 
-  $writer = IOFactory::createWriter($word, 'Word2007');
-  $writer->save("php://output");
-  exit;
+    // Export
+    $pdf->Output("fiche_{$fiche['id']}.pdf", 'D');
+    exit;
 }
+
+
+/* WORD
+if ($format === 'word') {
+
+    $word = new PhpWord();
+    $section = $word->addSection(['orientation' => 'landscape']);
+
+    $section->addText("Fiche de préparation de séance", ['bold' => true, 'size' => 14], ['alignment' => 'center']);
+    $section->addTextBreak(1);
+
+    // Tableau 3x3
+    $table = $section->addTable(['borderSize' => 6]);
+    $triples = [
+        ['Domaine d’apprentissage', 'domaine', 'Niveau', 'niveau', 'Durée totale de la séance', 'duree'],
+        ['Place de la séance dans la séquence', 'sequence', 'Titre de la séquence', 'sequence', 'Titre de la séance', 'seance'],
+        ['Objectif(s) visé(s)', 'objectifs', 'Compétence(s) visée(s)', 'competences', 'Prérequis', 'prerequis']
+    ];
+    foreach ($triples as $row) {
+        $table->addRow();
+        for ($i = 0; $i < 3; $i++) {
+            $table->addCell()->addText($row[$i * 2] . " :", ['bold' => true]);
+            $table->addCell()->addText($fiche[$row[$i * 2 + 1]]);
+        }
+    }
+
+    // Prérequis
+    $section->addTextBreak();
+    $section->addText("AFC :", ['bold' => true]);
+    $section->addText($fiche['afc']);
+
+    // Déroulement
+    $section->addTextBreak();
+    $section->addText("Déroulement de la séance", ['bold' => true]);
+    $table2 = $section->addTable(['borderSize' => 6]);
+    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l’enseignant", "Rôle de l’élève", "Différenciation", "Matériel"];
+    $table2->addRow();
+    foreach ($headers as $h) $table2->addCell()->addText($h, ['bold' => true]);
+
+    foreach ($deroulements as $d) {
+        $table2->addRow();
+        $table2->addCell()->addText($d['phase']);
+        $table2->addCell()->addText($d['deroulement']);
+        $table2->addCell()->addText($d['consignes']);
+        $table2->addCell()->addText($d['role_enseignant']);
+        $table2->addCell()->addText($d['role_eleve']);
+        $table2->addCell()->addText($d['differenciation']);
+        $table2->addCell()->addText($d['materiel']);
+    }
+
+    // Blocs finaux
+    $section->addTextBreak(1);
+    $f = [
+        "Modalités d’évaluation" => 'evaluation',
+        "Bilan pédagogique et didactique" => 'bilan',
+        "Prolongement(s) possible(s)" => 'prolongement',
+        "Remédiation(s) éventuelle(s)" => 'remediation',
+        "Nom / Prénom de l’enseignant" => 'nom_enseignant'
+    ];
+    foreach ($f as $label => $key) {
+        $section->addTextBreak();
+        $section->addText($label . " :", ['bold' => true]);
+        $section->addText($fiche[$key]);
+    }
+
+    $temp = tempnam(sys_get_temp_dir(), 'fiche') . '.docx';
+    IOFactory::createWriter($word, 'Word2007')->save($temp);
+
+    header("Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    header("Content-Disposition: attachment; filename=fiche_{$fiche['id']}.docx");
+    readfile($temp);
+    unlink($temp);
+    exit;
+}
+*/
+?>

@@ -2,7 +2,7 @@
 require_once __DIR__ . '/includes/config.php';
 session_start();
 if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
+  header('Location: /login');
   exit;
 }
 
@@ -23,6 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   echo "<p>✅ Fiche enregistrée avec succès !</p><a href='index.php'>Retour</a>";
 } else {
-  header('Location: index.php');
+  header('Location: /');
   exit;
 }

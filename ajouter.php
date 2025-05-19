@@ -3,17 +3,21 @@ session_start();
 require_once __DIR__ . '/includes/config.php';
 
 if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
+  header('Location: /login');
   exit;
 }
 
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $stmt = $pdo->prepare("INSERT INTO fiches (
-    domaine, niveau, duree, sequence, seance, objectifs, competences,
-    prerequis, nom_enseignant, deroulement_json, utilisateur_id
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO fiches (
+        domaine, niveau, duree, sequence, seance, objectifs, competences, afc,
+        prerequis, nom_enseignant, deroulement_json,
+        evaluation, bilan, prolongement, remediation,
+        utilisateur_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+      
+      
 
   $stmt->execute([
     $_POST['domaine'],
@@ -23,9 +27,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_POST['seance'],
     $_POST['objectifs'],
     $_POST['competences'],
+    $_POST['afc'],
     $_POST['prerequis'],
     $_POST['nom_enseignant'],
     $_POST['deroulement_json'],
+    $_SESSION['utilisateur_id'],
+    $_POST['evaluation'],
+    $_POST['bilan'],
+    $_POST['prolongement'],
+    $_POST['remediation'],
     $_SESSION['utilisateur_id']
   ]);
 
@@ -54,8 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <input type="text" name="seance" placeholder="Séance" required>
       <textarea name="objectifs" placeholder="Objectifs visés" required></textarea>
       <textarea name="competences" placeholder="Compétences visées" required></textarea>
+      <textarea name="afc" placeholder="AFC"></textarea>
       <textarea name="prerequis" placeholder="Prérequis" required></textarea>
       <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required>
+      <textarea name="evaluation" placeholder="Modalités d’évaluation"></textarea>
+      <textarea name="bilan" placeholder="Bilan pédagogique et didactique"></textarea>
+      <textarea name="prolongement" placeholder="Prolongement(s) possible(s)"></textarea>
+      <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)"></textarea>
 
       <h3>Déroulement de la séance</h3>
       <table id="deroulement-table" border="1" cellpadding="4" cellspacing="0" width="100%">
@@ -75,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </table>
       <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
+      
 
       <button type="submit">💾 Enregistrer</button>
     </form>

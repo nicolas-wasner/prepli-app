@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/includes/config.php';
 
 if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
+  header('Location: /login');
   exit;
 }
 
@@ -47,7 +47,7 @@ $sequences = $stmt->fetchAll();
   <div class="container">
     <h1>🧩 Mes séquences</h1>
 
-    <p><a href="creer_sequence.php">➕ Créer une nouvelle séquence</a></p>
+    <p><a href="/creer_sequence">➕ Créer une nouvelle séquence</a></p>
 
     <?php if (count($sequences) === 0): ?>
       <p>Aucune séquence enregistrée.</p>
@@ -70,10 +70,10 @@ $sequences = $stmt->fetchAll();
               <td><?= nl2br(htmlspecialchars($seq['description'])) ?></td>
               <td><?= $seq['nb_fiches'] ?></td>
               <td>
-                <a href="modifier_sequence.php?id=<?= $seq['id'] ?>">✏️ Modifier</a> |
-                <a href="dupliquer_sequence.php?id=<?= $seq['id'] ?>">🧬 Dupliquer</a> |
-                <a href="export_sequence.php?id=<?= $seq['id'] ?>">📄 Exporter</a> |
-                <a href="supprimer_sequence.php?id=<?= $seq['id'] ?>" onclick="return confirm('Supprimer cette séquence ?');">🗑️ Supprimer</a>
+                <a href="/modifier_sequence/<?= $seq['id'] ?>">✏️ Modifier</a> |
+                <a href="/dupliquer_sequence/<?= $seq['id'] ?>">🧬 Dupliquer</a> |
+                <a href="/export_sequence/<?= $seq['id'] ?>">📄 Exporter</a> |
+                <a href="/supprimer_sequence/<?= $seq['id'] ?>" onclick="return confirm('Supprimer cette séquence ?');">🗑️ Supprimer</a>
               </td>
             </tr>
           <?php endforeach; ?>

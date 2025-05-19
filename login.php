@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if ($user && password_verify($mot_de_passe, $user['mot_de_passe'])) {
     $_SESSION['utilisateur_id'] = $user['id'];
     $_SESSION['utilisateur_nom'] = $user['nom'];
-    header('Location: fiches.php');
+    header('Location: fiches');
     exit;
   } else {
     $erreur = "❌ Email ou mot de passe incorrect.";
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit">Se connecter</button>
   </form>
 
-  <p>Pas encore de compte ? <a href="inscription.php">Créer un compte</a></p>
-  <p><a href="index.php">⬅ Retour à l'accueil</a></p>
+  <p>Pas encore de compte ? <a href="/inscription">Créer un compte</a></p>
+  <p><a href="/">⬅ Retour à l'accueil</a></p>
 </body>
 </html>

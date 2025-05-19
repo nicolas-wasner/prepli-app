@@ -1,0 +1,19 @@
+RewriteEngine On
+RewriteBase /
+
+# ✅ Supprime .php sauf pour fichiers spéciaux
+RewriteCond %{REQUEST_URI} !^/(404|favicon|robots)\.php$
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^([^/]+)/?$ $1.php [L]
+
+# ✅ Routes dynamiques uniquement
+RewriteRule ^modifier/([0-9]+)/?$ modifier.php?id=$1 [QSA,L]
+RewriteRule ^supprimer/([0-9]+)/?$ supprimer.php?id=$1 [QSA,L]
+RewriteRule ^export/([0-9]+)/([a-z]+)/?$ export.php?id=$1&format=$2 [QSA,L]
+
+# ✅ Page d'accueil
+DirectoryIndex index.php
+
+# ✅ Page 404 personnalisée
+ErrorDocument 404 /404.php

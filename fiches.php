@@ -2,7 +2,7 @@
 
 session_start();
 if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
+  header('Location: /login');
   exit;
 }
 
@@ -24,8 +24,8 @@ $fiches = $stmt->fetchAll();
 <body>
 <?php include __DIR__ . '/includes/header.php'; ?>
   <h1>Liste des fiches enregistrées</h1>
-  <a href="index.php">⬅ Retour à l'accueil</a>
-  <a href="ajouter.php" style="color:black; text-decoration:none;">➕ Ajouter une fiche</a>
+  <a href="/">⬅ Retour à l'accueil</a>
+  <a href="ajouter" style="color:black; text-decoration:none;">➕ Ajouter une fiche</a>
   <table border="1" cellpadding="8" cellspacing="0">
     <thead>
       <tr>
@@ -42,11 +42,11 @@ $fiches = $stmt->fetchAll();
           <td><?= htmlspecialchars($fiche['seance']) ?></td>
           <td><?= htmlspecialchars($fiche['nom_enseignant']) ?></td>
           <td>
-          <a href="modifier.php?id=<?= $fiche['id'] ?>">✏️ Modifier</a> |
-          <a href="dupliquer.php?id=<?= $fiche['id'] ?>">🧬 Dupliquer</a> |
-          <a href="supprimer.php?id=<?= $fiche['id'] ?>" onclick="return confirm('Supprimer cette fiche ?');">🗑️ Supprimer</a> |
-          <a href="export.php?id=<?= $fiche['id'] ?>&format=word">📄 Export Word</a> |
-          <a href="export.php?id=<?= $fiche['id'] ?>&format=pdf">📄 Export PDF</a>
+          <a href="/modifier/<?= $fiche['id'] ?>">✏️ Modifier</a> |
+          <a href="/dupliquer/<?= $fiche['id'] ?>">🧬 Dupliquer</a> |
+          <a href="/supprimer/<?= $fiche['id'] ?>" onclick="return confirm('Supprimer cette fiche ?');">🗑️ Supprimer</a> |
+          <!-- <a href="export.php?id=<?= $fiche['id'] ?>&format=word">📄 Export Word</a> | -->
+          <a href="/export/<?= $fiche['id'] ?>/pdf">📄 Export PDF</a>
 
           </td>
         </tr>

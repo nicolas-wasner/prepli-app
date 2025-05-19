@@ -2,12 +2,15 @@
 session_start();
 require_once __DIR__ . '/includes/config.php';
 
-// Masquer les erreurs deprecated PHP 8.1+
-ini_set('display_errors', 0);
-error_reporting(E_ALL & ~E_DEPRECATED);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+$success = null;
+$error = null;
 
 if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
+  header('Location: /login');
   exit;
 }
 
@@ -23,35 +26,33 @@ if (!$fiche) {
   exit;
 }
 
-$success = '';
-
-// Enregistrement
+// Traitement de la mise à jour
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $deroulement_json = $_POST['deroulement_json'] ?? '[]';
+  $test = json_decode($deroulement_json, true);
+  if (json_last_error() !== JSON_ERROR_NONE) {
+    exit("❌ Erreur JSON : " . json_last_error_msg());
+  }
+
   $stmt = $pdo->prepare("UPDATE fiches SET
     domaine = ?, niveau = ?, duree = ?, sequence = ?, seance = ?,
-    objectifs = ?, competences = ?, prerequis = ?, nom_enseignant = ?,
-    deroulement_json = ?
+    objectifs = ?, competences = ?, prerequis = ?, afc = ?,
+    evaluation = ?, bilan = ?, prolongement = ?, remediation = ?,
+    nom_enseignant = ?, deroulement_json = ?
     WHERE id = ? AND utilisateur_id = ?");
 
   $stmt->execute([
-    $_POST['domaine'],
-    $_POST['niveau'],
-    $_POST['duree'],
-    $_POST['sequence'],
-    $_POST['seance'],
-    $_POST['objectifs'],
-    $_POST['competences'],
-    $_POST['prerequis'],
-    $_POST['nom_enseignant'],
-    $_POST['deroulement_json'],
-    $id,
-    $_SESSION['utilisateur_id']
+    $_POST['domaine'], $_POST['niveau'], $_POST['duree'], $_POST['sequence'], $_POST['seance'],
+    $_POST['objectifs'], $_POST['competences'], $_POST['prerequis'], $_POST['afc'],
+    $_POST['evaluation'], $_POST['bilan'], $_POST['prolongement'], $_POST['remediation'],
+    $_POST['nom_enseignant'], $deroulement_json,
+    $id, $_SESSION['utilisateur_id']
   ]);
 
   $success = "✅ Fiche mise à jour avec succès.";
 }
 
-// Données à afficher
+// Pour affichage
 $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
 ?>
 
@@ -60,25 +61,29 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
 <head>
   <meta charset="UTF-8">
   <title>Modifier fiche</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <?php include __DIR__ . '/includes/header.php'; ?>
   <div class="container">
     <h1>✏️ Modifier la fiche « <?= htmlspecialchars((string) $fiche['seance']) ?> »</h1>
-
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
     <form method="post">
-      <input type="text" name="domaine" placeholder="Domaine" value="<?= htmlspecialchars((string) $fiche['domaine']) ?>" required>
-      <input type="text" name="niveau" placeholder="Niveau" value="<?= htmlspecialchars((string) $fiche['niveau']) ?>" required>
-      <input type="text" name="duree" placeholder="Durée" value="<?= htmlspecialchars((string) $fiche['duree']) ?>" required>
-      <input type="text" name="sequence" placeholder="Séquence" value="<?= htmlspecialchars((string) $fiche['sequence']) ?>" required>
-      <input type="text" name="seance" placeholder="Séance" value="<?= htmlspecialchars((string) $fiche['seance']) ?>" required>
-      <textarea name="objectifs" placeholder="Objectifs visés"><?= htmlspecialchars((string) $fiche['objectifs']) ?></textarea>
-      <textarea name="competences" placeholder="Compétences visées"><?= htmlspecialchars((string) $fiche['competences']) ?></textarea>
-      <textarea name="prerequis" placeholder="Prérequis"><?= htmlspecialchars((string) $fiche['prerequis']) ?></textarea>
-      <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" value="<?= htmlspecialchars((string) $fiche['nom_enseignant']) ?>">
+      <input type="text" name="domaine" placeholder="Domaine" value="<?= htmlspecialchars($fiche['domaine']) ?>" required>
+      <input type="text" name="niveau" placeholder="Niveau" value="<?= htmlspecialchars($fiche['niveau']) ?>" required>
+      <input type="text" name="duree" placeholder="Durée" value="<?= htmlspecialchars($fiche['duree']) ?>" required>
+      <input type="text" name="sequence" placeholder="Séquence" value="<?= htmlspecialchars($fiche['sequence']) ?>" required>
+      <input type="text" name="seance" placeholder="Séance" value="<?= htmlspecialchars($fiche['seance']) ?>" required>
+      <textarea name="objectifs" placeholder="Objectifs visés"><?= htmlspecialchars($fiche['objectifs']) ?></textarea>
+      <textarea name="competences" placeholder="Compétences visées"><?= htmlspecialchars($fiche['competences']) ?></textarea>
+      <textarea name="afc" placeholder="AFC"><?= htmlspecialchars($fiche['afc']) ?></textarea>
+      <textarea name="prerequis" placeholder="Prérequis"><?= htmlspecialchars($fiche['prerequis']) ?></textarea>
+      <textarea name="evaluation" placeholder="Modalités d’évaluation"><?= htmlspecialchars($fiche['evaluation']) ?></textarea>
+      <textarea name="bilan" placeholder="Bilan pédagogique et didactique"><?= htmlspecialchars($fiche['bilan']) ?></textarea>
+      <textarea name="prolongement" placeholder="Prolongement(s) possible(s)"><?= htmlspecialchars($fiche['prolongement']) ?></textarea>
+      <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)"><?= htmlspecialchars($fiche['remediation']) ?></textarea>
+      <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" value="<?= htmlspecialchars($fiche['nom_enseignant']) ?>">
 
       <h3>Déroulement de la séance</h3>
       <table id="deroulement-table" border="1" cellpadding="4" cellspacing="0" width="100%">
@@ -98,7 +103,7 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       </table>
       <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
-
+      <br><br>
       <button type="submit">💾 Enregistrer les modifications</button>
     </form>
   </div>

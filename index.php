@@ -48,12 +48,12 @@
 
     <div class="menu">
       <?php if (isset($_SESSION['utilisateur_id'])): ?>
-        <a href="fiches.php">📄 Mes fiches</a>
-        <a href="sequences.php">🧩 Mes séquences</a>
-        <a href="logout.php">🚪 Se déconnecter</a>
+        <a href="/fiches">📄 Mes fiches</a>
+        <a href="/sequences">🧩 Mes séquences</a>
+        <a href="/logout">🚪 Se déconnecter</a>
       <?php else: ?>
-        <a href="login.php">🔐 Connexion</a>
-        <a href="inscription.php">🆕 Créer un compte</a>
+        <a href="/login">🔐 Connexion</a>
+        <a href="/inscription">🆕 Créer un compte</a>
       <?php endif; ?>
     </div>
 

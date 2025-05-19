@@ -3,7 +3,7 @@ session_start();
 require_once __DIR__ . '/includes/config.php';
 
 if (!isset($_SESSION['utilisateur_id'])) {
-  header('Location: login.php');
+  header('Location: /login');
   exit;
 }
 
@@ -27,5 +27,5 @@ $stmt->execute([$id]);
 $stmt = $pdo->prepare("DELETE FROM sequences WHERE id = ?");
 $stmt->execute([$id]);
 
-header('Location: sequences.php');
+header('Location: /sequences');
 exit;
