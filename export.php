@@ -33,13 +33,41 @@ $deroulements = json_decode($fiche['deroulement_json'] ?? '[]', true);
 if ($format === 'pdf') {
     require_once __DIR__ . '/includes/tcpdf/tcpdf.php';
 
+    // Extend TCPDF to customize the footer
+    class MYPDF extends TCPDF {
+        protected $nom_enseignant = '';
+
+        public function setNomEnseignant($nom) {
+            $this->nom_enseignant = $nom;
+        }
+
+        // Page footer
+        public function Footer() {
+            // Position at 15 mm from bottom
+            $this->SetY(-15);
+            // Set font
+            $this->SetFont('helvetica', 'I', 10);
+            // Teacher name
+            if (!empty($this->nom_enseignant)) {
+                $this->Cell(0, 10, 'Enseignant: ' . $this->nom_enseignant, 0, false, 'C', 0, '', 0, false, 'T', 'M');
+            }
+        }
+    }
+
     // Création du PDF
-    $pdf = new TCPDF('L', 'mm', 'A4', true, 'UTF-8', false);
+    $pdf = new MYPDF('L', 'mm', 'A4', true, 'UTF-8', false);
     $pdf->SetCreator(PDF_CREATOR);
     $pdf->SetAuthor('Prepli');
-    $pdf->SetTitle('Fiche de préparation');
+    $pdf->SetTitle($fiche['seance']);
     $pdf->SetMargins(10, 10, 10);
     $pdf->SetAutoPageBreak(TRUE, 10);
+
+    // Configuration du footer avec le nom de l'enseignant
+    $pdf->setPrintFooter(true);
+    $pdf->setFooterFont(Array('helvetica', '', 10));
+    $pdf->setFooterMargin(10);
+    // Définir le nom de l'enseignant dans le footer
+    $pdf->setNomEnseignant($fiche['nom_enseignant'] ?? '');
     $pdf->AddPage();
 
     $pdf->SetFont('helvetica', 'B', 14);
@@ -51,9 +79,9 @@ if ($format === 'pdf') {
     // Infos générales (3x3)
     $html = '<table border="1" cellpadding="4">';
     $rows = [
-        ['Domaine d’apprentissage' => $fiche['domaine'], 'Niveau' => $fiche['niveau'], 'Durée totale de la séance' => $fiche['duree']],
-        ['Place de la séance dans la séquence' => $fiche['sequence'], 'Titre de la séquence' => $fiche['sequence'], 'Titre de la séance' => $fiche['seance']],
-        ['Objectif(s) visé(s)' => $fiche['objectifs'], 'Compétence(s) visée(s)' => $fiche['competences'], 'Prérequis' => $fiche['prerequis']],
+        ['Domaine d\'apprentissage' => $fiche['domaine'], 'Niveau' => $fiche['niveau'], 'Durée totale de la séance' => $fiche['duree']],
+//        ['Place de la séance dans la séquence' => $fiche['sequence'], 'Titre de la séquence' => $fiche['sequence']],
+//        ['Objectif(s) visé(s)' => $fiche['objectifs'], 'Compétence(s) visée(s)' => $fiche['competences']],
     ];
     foreach ($rows as $row) {
         $html .= '<tr>';
@@ -64,13 +92,31 @@ if ($format === 'pdf') {
     }
     $html .= '</table><br>';
 
+    // Tableau 2x2
+    $html .= '<table border="1" cellpadding="4">
+                 <tr><td><strong>Place de la séance dans la séquence :</strong><br>' . nl2br(htmlspecialchars($fiche['sequence'])) . '</td>
+                 <td><strong>Titre de la séquence :</strong><br>' . nl2br(htmlspecialchars($fiche['sequence'])) . '</td></tr>
+                </table><br>';
+
+    // Tableau 2x2
+    $html .= '<table border="1" cellpadding="4">
+                 <tr><td><strong>Compétences visé(s) :</strong><br>' . nl2br(htmlspecialchars($fiche['competences'])) . '</td>
+                 <td><strong>Compétences du SCCCC :</strong><br>' . nl2br(htmlspecialchars($fiche['competences_scccc'] ?? '')) . '</td></tr>
+                </table><br>';
+
     // Prérequis
+    $html .= '<table border="1" cellpadding="4"><tr><td><strong>Prérequis :</strong><br>' . nl2br(htmlspecialchars($fiche['prerequis'])) . '</td></tr></table><br>';
+
+    // Objectifs
+    $html .= '<table border="1" cellpadding="4"><tr><td><strong>Objectif(s) visé(s) :</strong><br>' . nl2br(htmlspecialchars($fiche['objectifs'])) . '</td></tr></table><br>';
+
+    // AFC
     $html .= '<table border="1" cellpadding="4"><tr><td><strong>AFC :</strong><br>' . nl2br(htmlspecialchars($fiche['afc'])) . '</td></tr></table><br>';
 
     // Déroulement de la séance
     $html .= '<h3>Déroulement de la séance</h3>';
     $html .= '<table border="1" cellpadding="4"><tr>';
-    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l’enseignant", "Rôle de l’élève", "Différenciation", "Matériel"];
+    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l'enseignant", "Rôle de l'élève", "Différenciation", "Matériel"];
     foreach ($headers as $h) {
         $html .= '<th>' . htmlspecialchars($h) . '</th>';
     }
@@ -90,11 +136,10 @@ if ($format === 'pdf') {
 
     // Blocs finaux
     $finals = [
-        "Modalités d’évaluation" => 'evaluation',
+        "Modalités d\'évaluation" => 'evaluation',
         "Bilan pédagogique et didactique" => 'bilan',
         "Prolongement(s) possible(s)" => 'prolongement',
         "Remédiation(s) éventuelle(s)" => 'remediation',
-        "Nom / Prénom de l’enseignant" => 'nom_enseignant',
     ];
     foreach ($finals as $label => $key) {
         $html .= '<table border="1" cellpadding="4"><tr><td><strong>' . htmlspecialchars($label) . ' :</strong><br>' . nl2br(htmlspecialchars($fiche[$key])) . '</td></tr></table><br>';
@@ -121,7 +166,7 @@ if ($format === 'word') {
     // Tableau 3x3
     $table = $section->addTable(['borderSize' => 6]);
     $triples = [
-        ['Domaine d’apprentissage', 'domaine', 'Niveau', 'niveau', 'Durée totale de la séance', 'duree'],
+        ['Domaine d\'apprentissage', 'domaine', 'Niveau', 'niveau', 'Durée totale de la séance', 'duree'],
         ['Place de la séance dans la séquence', 'sequence', 'Titre de la séquence', 'sequence', 'Titre de la séance', 'seance'],
         ['Objectif(s) visé(s)', 'objectifs', 'Compétence(s) visée(s)', 'competences', 'Prérequis', 'prerequis']
     ];
@@ -142,7 +187,7 @@ if ($format === 'word') {
     $section->addTextBreak();
     $section->addText("Déroulement de la séance", ['bold' => true]);
     $table2 = $section->addTable(['borderSize' => 6]);
-    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l’enseignant", "Rôle de l’élève", "Différenciation", "Matériel"];
+    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l'enseignant", "Rôle de l'élève", "Différenciation", "Matériel"];
     $table2->addRow();
     foreach ($headers as $h) $table2->addCell()->addText($h, ['bold' => true]);
 
@@ -160,11 +205,10 @@ if ($format === 'word') {
     // Blocs finaux
     $section->addTextBreak(1);
     $f = [
-        "Modalités d’évaluation" => 'evaluation',
+        "Modalités d\'évaluation" => 'evaluation',
         "Bilan pédagogique et didactique" => 'bilan',
         "Prolongement(s) possible(s)" => 'prolongement',
         "Remédiation(s) éventuelle(s)" => 'remediation',
-        "Nom / Prénom de l’enseignant" => 'nom_enseignant'
     ];
     foreach ($f as $label => $key) {
         $section->addTextBreak();
