@@ -49,7 +49,7 @@ if ($format === 'pdf') {
             $this->SetFont('helvetica', 'I', 10);
             // Teacher name
             if (!empty($this->nom_enseignant)) {
-                $this->Cell(0, 10, 'Enseignant: ' . $this->nom_enseignant, 0, false, 'C', 0, '', 0, false, 'T', 'M');
+                $this->Cell(0, 10, $this->nom_enseignant, 0, false, 'C', 0, '', 0, false, 'T', 'M');
             }
         }
     }
@@ -58,7 +58,7 @@ if ($format === 'pdf') {
     $pdf = new MYPDF('L', 'mm', 'A4', true, 'UTF-8', false);
     $pdf->SetCreator(PDF_CREATOR);
     $pdf->SetAuthor('Prepli');
-    $pdf->SetTitle($fiche['seance']);
+    $pdf->SetTitle('Séance : ' . $fiche['seance']);
     $pdf->SetMargins(10, 10, 10);
     $pdf->SetAutoPageBreak(TRUE, 10);
 
