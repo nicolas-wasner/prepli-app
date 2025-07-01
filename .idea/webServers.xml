@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="abb96240-43bb-42fa-9466-fa06234b1c8d" name="Prepli App" url="http://ftp-prepli.alwaysdata.net">
+        <fileTransfer rootFolder="/www" accessType="FTPS" host="ftp-prepli.alwaysdata.net" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="71f2063d-be24-49ad-8979-07b7ed19740b" name="Prepli">
+        <fileTransfer rootFolder="/home/prepli/www" accessType="SFTP" host="ssh-prepli.alwaysdata.net" port="22" sshConfigId="35611a4c-b068-4253-9a44-53cc853d10a0" sshConfig="prepli_admin@ssh-prepli.alwaysdata.net:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
