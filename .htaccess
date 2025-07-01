@@ -9,6 +9,11 @@ RewriteRule ^([^/]+)/?$ $1.php [L]
 
 # ✅ Routes dynamiques uniquement
 RewriteRule ^modifier/([0-9]+)/?$ modifier.php?id=$1 [QSA,L]
+RewriteRule ^modifier_sequence/([0-9]+)/?$ modifier_sequence.php?id=$1 [QSA,L]
+RewriteRule ^dupliquer_sequence/([0-9]+)/?$ dupliquer_sequence.php?id=$1 [QSA,L]
+RewriteRule ^export_sequence/([0-9]+)/?$ export_sequence.php?id=$1 [QSA,L]
+RewriteRule ^supprimer_sequence/([0-9]+)/?$ supprimer_sequence.php?id=$1 [QSA,L]
+RewriteRule ^creer_sequence/?$ creer_sequence.php [QSA,L]
 RewriteRule ^supprimer/([0-9]+)/?$ supprimer.php?id=$1 [QSA,L]
 RewriteRule ^export/([0-9]+)/([a-z]+)/?$ export.php?id=$1&format=$2 [QSA,L]
 

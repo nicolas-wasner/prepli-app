@@ -59,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Modifier séquence</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     .checkbox-list {
       max-height: 200px;
