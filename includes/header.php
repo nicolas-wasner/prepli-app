@@ -3,6 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
 ?>
+<!-- Added stylesheet reference to ensure consistent access across all pages -->
+<link rel="stylesheet" href="/style.css">
 <header style="padding: 1rem; background: #3498db; color: white;">
   <nav style="display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: auto;">
     <div>

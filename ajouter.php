@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         evaluation, bilan, prolongement, remediation,
         utilisateur_id
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-      
-      
+
+
 
   $stmt->execute([
     $_POST['domaine'],
@@ -48,7 +48,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Ajouter une fiche</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <?php include __DIR__ . '/includes/header.php'; ?>
@@ -57,7 +56,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
     <form action="" method="post">
-      <input type="text" name="domaine" placeholder="Domaine" required>
+      <select name="domaine" required>
+        <option value="">-- Sélectionnez un domaine d'apprentissage --</option>
+        <optgroup label="École maternelle (cycle 1)">
+          <option value="Mobiliser le langage dans toutes ses dimensions">Mobiliser le langage dans toutes ses dimensions</option>
+          <option value="Agir, s'exprimer, comprendre à travers l'activité physique">Agir, s'exprimer, comprendre à travers l'activité physique</option>
+          <option value="Agir, s'exprimer, comprendre à travers les activités artistiques">Agir, s'exprimer, comprendre à travers les activités artistiques</option>
+          <option value="Construire les premiers outils pour structurer sa pensée">Construire les premiers outils pour structurer sa pensée</option>
+          <option value="Explorer le monde">Explorer le monde</option>
+        </optgroup>
+        <optgroup label="École élémentaire et collège (cycle 2 à 4)">
+          <option value="Les langages pour penser et communiquer">Les langages pour penser et communiquer</option>
+          <option value="Les méthodes et outils pour apprendre">Les méthodes et outils pour apprendre</option>
+          <option value="La formation de la personne et du citoyen">La formation de la personne et du citoyen</option>
+          <option value="Les systèmes naturels et techniques">Les systèmes naturels et techniques</option>
+          <option value="Les représentations du monde et l'activité humaine">Les représentations du monde et l'activité humaine</option>
+        </optgroup>
+        <optgroup label="Transversal (tout cycle)">
+          <option value="Langues vivantes étrangères et régionales">Langues vivantes étrangères et régionales</option>
+          <option value="Éducation au développement durable">Éducation au développement durable</option>
+          <option value="Éducation artistique et culturelle">Éducation artistique et culturelle</option>
+        </optgroup>
+      </select>
       <input type="text" name="niveau" placeholder="Niveau" required>
       <input type="text" name="duree" placeholder="Durée" required>
       <input type="text" name="sequence" placeholder="Séquence" required>
@@ -90,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </table>
       <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
-      
+
 
       <button type="submit">💾 Enregistrer</button>
     </form>

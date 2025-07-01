@@ -43,7 +43,7 @@ if ($format === 'pdf') {
     $pdf->AddPage();
 
     $pdf->SetFont('helvetica', 'B', 14);
-    $pdf->Cell(0, 10, "Fiche de préparation de séance", 0, 1, 'C');
+    $pdf->Cell(0, 10, $fiche['seance'], 0, 1, 'C');
     $pdf->Ln(3);
 
     $pdf->SetFont('helvetica', '', 10);

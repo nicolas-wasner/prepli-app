@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8">
   <title>Créer une séquence</title>
-  <link rel="stylesheet" href="style.css">
   <style>
   .checkbox-list {
     display: flex;

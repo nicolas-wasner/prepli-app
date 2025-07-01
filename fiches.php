@@ -19,7 +19,6 @@ $fiches = $stmt->fetchAll();
 <head>
   <meta charset="UTF-8">
   <title>Liste des fiches</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <?php include __DIR__ . '/includes/header.php'; ?>

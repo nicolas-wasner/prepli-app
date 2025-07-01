@@ -4,7 +4,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Accueil – Application PrepLi</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     .container {
       text-align: center;

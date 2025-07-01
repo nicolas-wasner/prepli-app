@@ -25,7 +25,6 @@ $sequences = $stmt->fetchAll();
 <head>
   <meta charset="UTF-8">
   <title>Mes séquences</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     table {
       width: 100%;
