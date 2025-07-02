@@ -56,47 +56,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Modifier séquence</title>
-  <style>
-    .checkbox-list {
-      max-height: 200px;
-      overflow-y: auto;
-      border: 1px solid #ccc;
-      padding: 1rem;
-    }
-  </style>
-</head>
+<?php $page_title = 'Modifier séquence'; include __DIR__ . '/includes/head.php'; ?>
 <body>
   <?php include __DIR__ . '/includes/header.php'; ?>
 
-  <div class="container">
+  <div class="container pt-16">
     <h1>✏️ Modifier la séquence « <?= htmlspecialchars($sequence['titre']) ?> »</h1>
 
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
-    <form method="post">
-      <label>Titre :
-        <input type="text" name="titre" value="<?= htmlspecialchars($sequence['titre']) ?>" required>
+    <form method="post" class="space-y-6 max-w-xl bg-white rounded-xl shadow p-8 mt-8">
+      <label class="block mb-2 font-semibold text-gray-700">Titre :
+        <input type="text" name="titre" value="<?= htmlspecialchars($sequence['titre']) ?>" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
 
-      <label>Description :
-        <textarea name="description" rows="4"><?= htmlspecialchars($sequence['description']) ?></textarea>
+      <label class="block mb-2 font-semibold text-gray-700">Description :
+        <textarea name="description" rows="4" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($sequence['description']) ?></textarea>
       </label>
 
-      <label>Fiches associées :</label>
-      <div class="checkbox-list">
+      <label class="block mb-2 font-semibold text-gray-700">Fiches associées :</label>
+      <div class="space-y-2">
         <?php foreach ($fiches as $fiche): ?>
-          <label>
-            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>"
-              <?= in_array($fiche['id'], $fiches_associees) ? 'checked' : '' ?>>
-            <?= htmlspecialchars($fiche['sequence']) ?> – <?= htmlspecialchars($fiche['seance']) ?>
-          </label><br>
+          <label class="flex items-center gap-2 text-gray-700">
+            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>" <?= in_array($fiche['id'], $fiches_associees) ? 'checked' : '' ?> class="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <span><?= htmlspecialchars($fiche['sequence']) ?> – <?= htmlspecialchars($fiche['seance']) ?></span>
+          </label>
         <?php endforeach; ?>
       </div>
 
-      <button type="submit" style="margin-top:1rem;">💾 Enregistrer les modifications</button>
+      <button type="submit" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2"><span>💾</span> Enregistrer les modifications</button>
     </form>
   </div>
 </body>

@@ -41,64 +41,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Créer une séquence</title>
-  <style>
-  .checkbox-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-height: 200px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    padding: 1rem;
-  }
-
-  .checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1rem;
-  }
-
-  .checkbox-item input[type="checkbox"] {
-    transform: scale(1.2);
-    margin: 0;
-  }
-</style>
-
-</head>
+<?php $page_title = 'Créer une séquence'; include __DIR__ . '/includes/head.php'; ?>
 <body>
   <?php include __DIR__ . '/includes/header.php'; ?>
 
-  <div class="container">
+  <div class="container pt-16">
     <h1>Créer une séquence 📚</h1>
 
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
     <?php if ($erreur): ?><p style="color:red;"><?= $erreur ?></p><?php endif; ?>
 
-    <form method="post" class="form-sequence">
-      <label>Titre de la séquence :
-        <input type="text" name="titre" required>
+    <form method="post" class="space-y-6 max-w-xl bg-white rounded-xl shadow p-8 mt-8">
+      <label class="block mb-2 font-semibold text-gray-700">Titre de la séquence :
+        <input type="text" name="titre" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
 
-      <label>Description :
-        <textarea name="description" rows="4"></textarea>
+      <label class="block mb-2 font-semibold text-gray-700">Description :
+        <textarea name="description" rows="4" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
 
-      <label>Fiches à inclure :</label>
-      <div class="checkbox-list">
-  <?php foreach ($fiches as $fiche): ?>
-    <label class="checkbox-item">
-      <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>">
-      <?= htmlspecialchars($fiche['sequence']) ?> – <?= htmlspecialchars($fiche['seance']) ?>
-    </label>
-  <?php endforeach; ?>
-</div>
+      <label class="block mb-2 font-semibold text-gray-700">Fiches à inclure :</label>
+      <div class="space-y-2">
+        <?php foreach ($fiches as $fiche): ?>
+          <label class="flex items-center gap-2 text-gray-700">
+            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>" class="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <span><?= htmlspecialchars($fiche['sequence']) ?> – <?= htmlspecialchars($fiche['seance']) ?></span>
+          </label>
+        <?php endforeach; ?>
+      </div>
 
-
-      <button type="submit" style="margin-top:1rem;">💾 Enregistrer la séquence</button>
+      <button type="submit" class="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2"><span>💾</span> Enregistrer la séquence</button>
     </form>
   </div>
 </body>

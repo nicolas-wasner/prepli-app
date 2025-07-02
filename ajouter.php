@@ -43,13 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Ajouter une fiche</title>
-</head>
+<?php $page_title = 'Ajouter une fiche'; include __DIR__ . '/includes/head.php'; ?>
 <body>
   <?php include __DIR__ . '/includes/header.php'; ?>
-  <div class="container">
+  <div class="container pt-16">
     <h1>Créer une fiche de préparation</h1>
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
@@ -159,27 +156,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <textarea name="afc" placeholder="AFC"></textarea>
       <textarea name="prerequis" placeholder="Prérequis" required></textarea>
       <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required>
-      <textarea name="evaluation" placeholder="Modalités d’évaluation"></textarea>
+      <textarea name="evaluation" placeholder="Modalités d'évaluation"></textarea>
       <textarea name="bilan" placeholder="Bilan pédagogique et didactique"></textarea>
       <textarea name="prolongement" placeholder="Prolongement(s) possible(s)"></textarea>
       <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)"></textarea>
 
-      <h3>Déroulement de la séance</h3>
-      <table id="deroulement-table" border="1" cellpadding="4" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>Phase & durée</th>
-            <th>Déroulement</th>
-            <th>Consigne</th>
-            <th>Rôle enseignant</th>
-            <th>Rôle élève</th>
-            <th>Différenciation</th>
-            <th>Matériel</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>
+      <div class="overflow-x-auto">
+        <table id="deroulement-table" class="min-w-full w-full border border-gray-200 rounded-lg text-sm bg-gray-50">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Phase & durée</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-56">Déroulement</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Consigne</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Rôle enseignant</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Rôle élève</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-48">Différenciation</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Matériel</th>
+              <th class="px-2 py-2 border-b w-10"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
       <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
 
@@ -242,19 +241,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     function addDeroulementRow(data = {}) {
       const table = document.querySelector('#deroulement-table tbody');
       const row = document.createElement('tr');
-      const champs = ['phase', 'deroulement', 'consignes', 'role_enseignant', 'role_eleve', 'differenciation', 'materiel'];
-      champs.forEach(name => {
-        const cell = document.createElement('td');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = name + '[]';
-        input.value = data[name] || '';
-        cell.appendChild(input);
-        row.appendChild(cell);
+      // On va utiliser une seule cellule qui contient toute la structure UX
+      const cell = document.createElement('td');
+      cell.colSpan = 8;
+      // Bloc principal
+      const bloc = document.createElement('div');
+      bloc.className = 'space-y-2 border rounded-lg p-3 bg-white mb-2 shadow';
+      // Ligne 1 : 3 champs côte à côte
+      const ligne1 = document.createElement('div');
+      ligne1.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
+      const champs1 = [
+        {name: 'phase', label: 'Phase & durée'},
+        {name: 'deroulement', label: 'Déroulement'},
+        {name: 'consignes', label: 'Consigne'}
+      ];
+      champs1.forEach(({name, label}) => {
+        const group = document.createElement('div');
+        const lab = document.createElement('label');
+        lab.className = 'block text-xs font-semibold text-gray-700 mb-1';
+        lab.textContent = label;
+        const textarea = document.createElement('textarea');
+        textarea.name = name + '[]';
+        textarea.value = data[name] || '';
+        textarea.className = 'w-full min-h-[2.5rem] p-2 border border-gray-300 rounded resize-y';
+        group.appendChild(lab);
+        group.appendChild(textarea);
+        ligne1.appendChild(group);
       });
-      const remove = document.createElement('td');
-      remove.innerHTML = '<button type="button" onclick="this.closest(\'tr\').remove()">🗑️</button>';
-      row.appendChild(remove);
+      bloc.appendChild(ligne1);
+      // Ligne 2 : 4 champs côte à côte
+      const ligne2 = document.createElement('div');
+      ligne2.className = 'grid grid-cols-1 md:grid-cols-4 gap-4 mt-2';
+      const champs2 = [
+        {name: 'role_enseignant', label: 'Rôle enseignant'},
+        {name: 'role_eleve', label: 'Rôle élève'},
+        {name: 'differenciation', label: 'Différenciation'},
+        {name: 'materiel', label: 'Matériel'}
+      ];
+      champs2.forEach(({name, label}) => {
+        const group = document.createElement('div');
+        const lab = document.createElement('label');
+        lab.className = 'block text-xs font-semibold text-gray-700 mb-1';
+        lab.textContent = label;
+        const textarea = document.createElement('textarea');
+        textarea.name = name + '[]';
+        textarea.value = data[name] || '';
+        textarea.className = 'w-full min-h-[2.5rem] p-2 border border-gray-300 rounded resize-y';
+        group.appendChild(lab);
+        group.appendChild(textarea);
+        ligne2.appendChild(group);
+      });
+      // Bouton supprimer à droite
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'flex items-end justify-end mt-2';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center justify-center ml-2';
+      btn.innerText = '🗑️';
+      btn.onclick = function() { bloc.closest('tr').remove(); };
+      btnGroup.appendChild(btn);
+      ligne2.appendChild(btnGroup);
+      bloc.appendChild(ligne2);
+      cell.appendChild(bloc);
+      row.appendChild(cell);
       table.appendChild(row);
     }
 

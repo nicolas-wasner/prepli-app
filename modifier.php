@@ -58,102 +58,132 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Modifier fiche</title>
-</head>
-<body>
+<?php $page_title = 'Modifier fiche'; include __DIR__ . '/includes/head.php'; ?>
+<body class="font-sans bg-gray-50 min-h-screen">
   <?php include __DIR__ . '/includes/header.php'; ?>
-  <div class="container">
-    <h1>✏️ Modifier la fiche « <?= htmlspecialchars((string) $fiche['seance']) ?> »</h1>
-    <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
-
-    <form method="post">
-      <select name="domaine" required>
-        <option value="">-- Sélectionnez un domaine d'apprentissage --</option>
-        <optgroup label="École maternelle (cycle 1)">
-          <option value="Mobiliser le langage dans toutes ses dimensions" <?= $fiche['domaine'] === 'Mobiliser le langage dans toutes ses dimensions' ? 'selected' : '' ?>>Mobiliser le langage dans toutes ses dimensions</option>
-          <option value="Agir, s'exprimer, comprendre à travers l'activité physique" <?= $fiche['domaine'] === 'Agir, s\'exprimer, comprendre à travers l\'activité physique' ? 'selected' : '' ?>>Agir, s'exprimer, comprendre à travers l'activité physique</option>
-          <option value="Agir, s'exprimer, comprendre à travers les activités artistiques" <?= $fiche['domaine'] === 'Agir, s\'exprimer, comprendre à travers les activités artistiques' ? 'selected' : '' ?>>Agir, s'exprimer, comprendre à travers les activités artistiques</option>
-          <option value="Construire les premiers outils pour structurer sa pensée" <?= $fiche['domaine'] === 'Construire les premiers outils pour structurer sa pensée' ? 'selected' : '' ?>>Construire les premiers outils pour structurer sa pensée</option>
-          <option value="Explorer le monde" <?= $fiche['domaine'] === 'Explorer le monde' ? 'selected' : '' ?>>Explorer le monde</option>
-        </optgroup>
-        <optgroup label="École élémentaire (cycle 2 à 3)">
-          <option value="Les langages pour penser et communiquer" <?= $fiche['domaine'] === 'Les langages pour penser et communiquer' ? 'selected' : '' ?>>Les langages pour penser et communiquer</option>
-          <option value="Les méthodes et outils pour apprendre" <?= $fiche['domaine'] === 'Les méthodes et outils pour apprendre' ? 'selected' : '' ?>>Les méthodes et outils pour apprendre</option>
-          <option value="La formation de la personne et du citoyen" <?= $fiche['domaine'] === 'La formation de la personne et du citoyen' ? 'selected' : '' ?>>La formation de la personne et du citoyen</option>
-          <option value="Les systèmes naturels et techniques" <?= $fiche['domaine'] === 'Les systèmes naturels et techniques' ? 'selected' : '' ?>>Les systèmes naturels et techniques</option>
-          <option value="Les représentations du monde et l'activité humaine" <?= $fiche['domaine'] === 'Les représentations du monde et l\'activité humaine' ? 'selected' : '' ?>>Les représentations du monde et l'activité humaine</option>
-        </optgroup>
-        <optgroup label="Transversal (tout cycle)">
-          <option value="Langues vivantes étrangères et régionales" <?= $fiche['domaine'] === 'Langues vivantes étrangères et régionales' ? 'selected' : '' ?>>Langues vivantes étrangères et régionales</option>
-          <option value="Éducation au développement durable" <?= $fiche['domaine'] === 'Éducation au développement durable' ? 'selected' : '' ?>>Éducation au développement durable</option>
-          <option value="Éducation artistique et culturelle" <?= $fiche['domaine'] === 'Éducation artistique et culturelle' ? 'selected' : '' ?>>Éducation artistique et culturelle</option>
-        </optgroup>
-      </select>
-      <input type="text" name="niveau" placeholder="Niveau" value="<?= htmlspecialchars($fiche['niveau']) ?>" required>
-      <input type="text" name="duree" placeholder="Durée" value="<?= htmlspecialchars($fiche['duree']) ?>" required>
-      <input type="text" name="sequence" placeholder="Séquence" value="<?= htmlspecialchars($fiche['sequence']) ?>" required>
-      <input type="text" name="seance" placeholder="Séance" value="<?= htmlspecialchars($fiche['seance']) ?>" required>
-      <textarea name="objectifs" placeholder="Objectifs visés"><?= htmlspecialchars($fiche['objectifs']) ?></textarea>
-      <select name="competences" required>
-        <option value="">-- Sélectionnez une compétence visée --</option>
-        <optgroup label="Mobiliser le langage dans toutes ses dimensions">
-          <option value="Oser entrer en communication" <?= $fiche['competences'] === 'Oser entrer en communication' ? 'selected' : '' ?>>Oser entrer en communication</option>
-          <option value="Comprendre et apprendre" <?= $fiche['competences'] === 'Comprendre et apprendre' ? 'selected' : '' ?>>Comprendre et apprendre</option>
-          <option value="Échanger et réfléchir avec les autres" <?= $fiche['competences'] === 'Échanger et réfléchir avec les autres' ? 'selected' : '' ?>>Échanger et réfléchir avec les autres</option>
-          <option value="Se préparer à apprendre à lire" <?= $fiche['competences'] === 'Se préparer à apprendre à lire' ? 'selected' : '' ?>>Se préparer à apprendre à lire</option>
-          <option value="Développer la conscience phonologique" <?= $fiche['competences'] === 'Développer la conscience phonologique' ? 'selected' : '' ?>>Développer la conscience phonologique</option>
-          <option value="Comprendre le principe alphabétique" <?= $fiche['competences'] === 'Comprendre le principe alphabétique' ? 'selected' : '' ?>>Comprendre le principe alphabétique</option>
-          <option value="Produire des discours variés" <?= $fiche['competences'] === 'Produire des discours variés' ? 'selected' : '' ?>>Produire des discours variés</option>
-          <option value="Découvrir les fonctions de l'écrit" <?= $fiche['competences'] === 'Découvrir les fonctions de l\'écrit' ? 'selected' : '' ?>>Découvrir les fonctions de l'écrit</option>
-          <option value="Commencer à produire des écrits" <?= $fiche['competences'] === 'Commencer à produire des écrits' ? 'selected' : '' ?>>Commencer à produire des écrits</option>
-          <option value="Se familiariser avec l'écrit dans toutes ses formes" <?= $fiche['competences'] === 'Se familiariser avec l\'écrit dans toutes ses formes' ? 'selected' : '' ?>>Se familiariser avec l'écrit dans toutes ses formes</option>
-        </optgroup>
-        <optgroup label="Agir, s'exprimer, comprendre à travers l'activité physique">
-          <option value="Agir dans des environnements variés" <?= $fiche['competences'] === 'Agir dans des environnements variés' ? 'selected' : '' ?>>Agir dans des environnements variés</option>
-          <option value="Adapter ses déplacements à des contraintes" <?= $fiche['competences'] === 'Adapter ses déplacements à des contraintes' ? 'selected' : '' ?>>Adapter ses déplacements à des contraintes</option>
-          <option value="Coopérer et s'opposer individuellement ou collectivement" <?= $fiche['competences'] === 'Coopérer et s\'opposer individuellement ou collectivement' ? 'selected' : '' ?>>Coopérer et s'opposer individuellement ou collectivement</option>
-          <option value="Exprimer des intentions par le geste" <?= $fiche['competences'] === 'Exprimer des intentions par le geste' ? 'selected' : '' ?>>Exprimer des intentions par le geste</option>
-          <option value="Apprendre à respecter des règles" <?= $fiche['competences'] === 'Apprendre à respecter des règles' ? 'selected' : '' ?>>Apprendre à respecter des règles</option>
-          <option value="Développer sa motricité fine et globale" <?= $fiche['competences'] === 'Développer sa motricité fine et globale' ? 'selected' : '' ?>>Développer sa motricité fine et globale</option>
-          <option value="Se repérer dans l'espace avec son corps" <?= $fiche['competences'] === 'Se repérer dans l\'espace avec son corps' ? 'selected' : '' ?>>Se repérer dans l'espace avec son corps</option>
-        </optgroup>
-        <optgroup label="Agir, s'exprimer, comprendre à travers les activités artistiques">
-          <option value="Expérimenter les matériaux, les outils, les supports" <?= $fiche['competences'] === 'Expérimenter les matériaux, les outils, les supports' ? 'selected' : '' ?>>Expérimenter les matériaux, les outils, les supports</option>
-          <option value="Créer des productions plastiques et visuelles" <?= $fiche['competences'] === 'Créer des productions plastiques et visuelles' ? 'selected' : '' ?>>Créer des productions plastiques et visuelles</option>
-          <option value="Observer et décrire des œuvres" <?= $fiche['competences'] === 'Observer et décrire des œuvres' ? 'selected' : '' ?>>Observer et décrire des œuvres</option>
-          <option value="Explorer des univers sonores" <?= $fiche['competences'] === 'Explorer des univers sonores' ? 'selected' : '' ?>>Explorer des univers sonores</option>
-          <option value="Participer à des jeux vocaux et corporels" <?= $fiche['competences'] === 'Participer à des jeux vocaux et corporels' ? 'selected' : '' ?>>Participer à des jeux vocaux et corporels</option>
-          <option value="Chanter seul et en groupe" <?= $fiche['competences'] === 'Chanter seul et en groupe' ? 'selected' : '' ?>>Chanter seul et en groupe</option>
-          <option value="Jouer avec sa voix et son corps" <?= $fiche['competences'] === 'Jouer avec sa voix et son corps' ? 'selected' : '' ?>>Jouer avec sa voix et son corps</option>
-          <option value="Imaginer, inventer, interpréter" <?= $fiche['competences'] === 'Imaginer, inventer, interpréter' ? 'selected' : '' ?>>Imaginer, inventer, interpréter</option>
-        </optgroup>
-        <optgroup label="Construire les premiers outils pour structurer sa pensée">
-          <option value="Dénombrer des quantités" <?= $fiche['competences'] === 'Dénombrer des quantités' ? 'selected' : '' ?>>Dénombrer des quantités</option>
-          <option value="Associer un nombre à une quantité" <?= $fiche['competences'] === 'Associer un nombre à une quantité' ? 'selected' : '' ?>>Associer un nombre à une quantité</option>
-          <option value="Utiliser le comptage pour résoudre des problèmes" <?= $fiche['competences'] === 'Utiliser le comptage pour résoudre des problèmes' ? 'selected' : '' ?>>Utiliser le comptage pour résoudre des problèmes</option>
-          <option value="Comprendre les nombres comme positions" <?= $fiche['competences'] === 'Comprendre les nombres comme positions' ? 'selected' : '' ?>>Comprendre les nombres comme positions</option>
-          <option value="Utiliser les premiers symboles mathématiques" <?= $fiche['competences'] === 'Utiliser les premiers symboles mathématiques' ? 'selected' : '' ?>>Utiliser les premiers symboles mathématiques</option>
-          <option value="Reproduire, compléter, créer des suites logiques" <?= $fiche['competences'] === 'Reproduire, compléter, créer des suites logiques' ? 'selected' : '' ?>>Reproduire, compléter, créer des suites logiques</option>
-          <option value="Reconnaître et nommer des formes" <?= $fiche['competences'] === 'Reconnaître et nommer des formes' ? 'selected' : '' ?>>Reconnaître et nommer des formes</option>
-          <option value="Comparer, classer des objets selon des critères" <?= $fiche['competences'] === 'Comparer, classer des objets selon des critères' ? 'selected' : '' ?>>Comparer, classer des objets selon des critères</option>
-          <option value="Se repérer dans le temps court (journée, semaine)" <?= $fiche['competences'] === 'Se repérer dans le temps court (journée, semaine)' ? 'selected' : '' ?>>Se repérer dans le temps court (journée, semaine)</option>
-        </optgroup>
-        <optgroup label="Explorer le monde">
-          <option value="Découvrir les objets, matières, phénomènes du vivant" <?= $fiche['competences'] === 'Découvrir les objets, matières, phénomènes du vivant' ? 'selected' : '' ?>>Découvrir les objets, matières, phénomènes du vivant</option>
-          <option value="Utiliser ses sens pour observer" <?= $fiche['competences'] === 'Utiliser ses sens pour observer' ? 'selected' : '' ?>>Utiliser ses sens pour observer</option>
-          <option value="Identifier les caractéristiques du vivant et des objets" <?= $fiche['competences'] === 'Identifier les caractéristiques du vivant et des objets' ? 'selected' : '' ?>>Identifier les caractéristiques du vivant et des objets</option>
-          <option value="Se repérer dans le temps (jours, mois, saisons)" <?= $fiche['competences'] === 'Se repérer dans le temps (jours, mois, saisons)' ? 'selected' : '' ?>>Se repérer dans le temps (jours, mois, saisons)</option>
-          <option value="Se repérer dans l'espace (école, classe, parcours)" <?= $fiche['competences'] === 'Se repérer dans l\'espace (école, classe, parcours)' ? 'selected' : '' ?>>Se repérer dans l'espace (école, classe, parcours)</option>
-          <option value="Découvrir l'usage d'objets techniques simples" <?= $fiche['competences'] === 'Découvrir l\'usage d\'objets techniques simples' ? 'selected' : '' ?>>Découvrir l'usage d'objets techniques simples</option>
-          <option value="Manipuler des outils numériques" <?= $fiche['competences'] === 'Manipuler des outils numériques' ? 'selected' : '' ?>>Manipuler des outils numériques</option>
-          <option value="Observer les effets de ses actions sur l'environnement" <?= $fiche['competences'] === 'Observer les effets de ses actions sur l\'environnement' ? 'selected' : '' ?>>Observer les effets de ses actions sur l'environnement</option>
-        </optgroup>
-      </select>
-
+  <main class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 my-10 pt-16">
+    <h1 class="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">✏️ Modifier la fiche <span class="text-gray-900">« <?= htmlspecialchars((string) $fiche['seance']) ?> »</span></h1>
+    <?php if ($success): ?>
+      <div class="mb-6 rounded bg-green-50 border border-green-200 text-green-800 px-4 py-3 flex items-center gap-2">
+        <span>✅</span> <span><?= $success ?></span>
+      </div>
+    <?php endif; ?>
+    <?php if ($error): ?>
+      <div class="mb-6 rounded bg-red-50 border border-red-200 text-red-800 px-4 py-3 flex items-center gap-2">
+        <span>❌</span> <span><?= $error ?></span>
+      </div>
+    <?php endif; ?>
+    <form method="post" class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Domaine</label>
+        <select name="domaine" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+          <option value="">-- Sélectionnez un domaine d'apprentissage --</option>
+          <optgroup label="École maternelle (cycle 1)">
+            <option value="Mobiliser le langage dans toutes ses dimensions" <?= $fiche['domaine'] === 'Mobiliser le langage dans toutes ses dimensions' ? 'selected' : '' ?>>Mobiliser le langage dans toutes ses dimensions</option>
+            <option value="Agir, s'exprimer, comprendre à travers l'activité physique" <?= $fiche['domaine'] === 'Agir, s\'exprimer, comprendre à travers l\'activité physique' ? 'selected' : '' ?>>Agir, s'exprimer, comprendre à travers l'activité physique</option>
+            <option value="Agir, s'exprimer, comprendre à travers les activités artistiques" <?= $fiche['domaine'] === 'Agir, s\'exprimer, comprendre à travers les activités artistiques' ? 'selected' : '' ?>>Agir, s'exprimer, comprendre à travers les activités artistiques</option>
+            <option value="Construire les premiers outils pour structurer sa pensée" <?= $fiche['domaine'] === 'Construire les premiers outils pour structurer sa pensée' ? 'selected' : '' ?>>Construire les premiers outils pour structurer sa pensée</option>
+            <option value="Explorer le monde" <?= $fiche['domaine'] === 'Explorer le monde' ? 'selected' : '' ?>>Explorer le monde</option>
+          </optgroup>
+          <optgroup label="École élémentaire (cycle 2 à 3)">
+            <option value="Les langages pour penser et communiquer" <?= $fiche['domaine'] === 'Les langages pour penser et communiquer' ? 'selected' : '' ?>>Les langages pour penser et communiquer</option>
+            <option value="Les méthodes et outils pour apprendre" <?= $fiche['domaine'] === 'Les méthodes et outils pour apprendre' ? 'selected' : '' ?>>Les méthodes et outils pour apprendre</option>
+            <option value="La formation de la personne et du citoyen" <?= $fiche['domaine'] === 'La formation de la personne et du citoyen' ? 'selected' : '' ?>>La formation de la personne et du citoyen</option>
+            <option value="Les systèmes naturels et techniques" <?= $fiche['domaine'] === 'Les systèmes naturels et techniques' ? 'selected' : '' ?>>Les systèmes naturels et techniques</option>
+            <option value="Les représentations du monde et l'activité humaine" <?= $fiche['domaine'] === 'Les représentations du monde et l\'activité humaine' ? 'selected' : '' ?>>Les représentations du monde et l'activité humaine</option>
+          </optgroup>
+          <optgroup label="Transversal (tout cycle)">
+            <option value="Langues vivantes étrangères et régionales" <?= $fiche['domaine'] === 'Langues vivantes étrangères et régionales' ? 'selected' : '' ?>>Langues vivantes étrangères et régionales</option>
+            <option value="Éducation au développement durable" <?= $fiche['domaine'] === 'Éducation au développement durable' ? 'selected' : '' ?>>Éducation au développement durable</option>
+            <option value="Éducation artistique et culturelle" <?= $fiche['domaine'] === 'Éducation artistique et culturelle' ? 'selected' : '' ?>>Éducation artistique et culturelle</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
+          <input type="text" name="niveau" placeholder="Niveau" value="<?= htmlspecialchars($fiche['niveau']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Durée</label>
+          <input type="text" name="duree" placeholder="Durée" value="<?= htmlspecialchars($fiche['duree']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Séquence</label>
+          <input type="text" name="sequence" placeholder="Séquence" value="<?= htmlspecialchars($fiche['sequence']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Séance</label>
+          <input type="text" name="seance" placeholder="Séance" value="<?= htmlspecialchars($fiche['seance']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Objectifs visés</label>
+        <textarea name="objectifs" placeholder="Objectifs visés" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['objectifs']) ?></textarea>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Compétence visée</label>
+        <select name="competences" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+          <option value="">-- Sélectionnez une compétence visée --</option>
+          <optgroup label="Mobiliser le langage dans toutes ses dimensions">
+            <option value="Oser entrer en communication" <?= $fiche['competences'] === 'Oser entrer en communication' ? 'selected' : '' ?>>Oser entrer en communication</option>
+            <option value="Comprendre et apprendre" <?= $fiche['competences'] === 'Comprendre et apprendre' ? 'selected' : '' ?>>Comprendre et apprendre</option>
+            <option value="Échanger et réfléchir avec les autres" <?= $fiche['competences'] === 'Échanger et réfléchir avec les autres' ? 'selected' : '' ?>>Échanger et réfléchir avec les autres</option>
+            <option value="Se préparer à apprendre à lire" <?= $fiche['competences'] === 'Se préparer à apprendre à lire' ? 'selected' : '' ?>>Se préparer à apprendre à lire</option>
+            <option value="Développer la conscience phonologique" <?= $fiche['competences'] === 'Développer la conscience phonologique' ? 'selected' : '' ?>>Développer la conscience phonologique</option>
+            <option value="Comprendre le principe alphabétique" <?= $fiche['competences'] === 'Comprendre le principe alphabétique' ? 'selected' : '' ?>>Comprendre le principe alphabétique</option>
+            <option value="Produire des discours variés" <?= $fiche['competences'] === 'Produire des discours variés' ? 'selected' : '' ?>>Produire des discours variés</option>
+            <option value="Découvrir les fonctions de l'écrit" <?= $fiche['competences'] === 'Découvrir les fonctions de l\'écrit' ? 'selected' : '' ?>>Découvrir les fonctions de l'écrit</option>
+            <option value="Commencer à produire des écrits" <?= $fiche['competences'] === 'Commencer à produire des écrits' ? 'selected' : '' ?>>Commencer à produire des écrits</option>
+            <option value="Se familiariser avec l'écrit dans toutes ses formes" <?= $fiche['competences'] === 'Se familiariser avec l\'écrit dans toutes ses formes' ? 'selected' : '' ?>>Se familiariser avec l'écrit dans toutes ses formes</option>
+          </optgroup>
+          <optgroup label="Agir, s'exprimer, comprendre à travers l'activité physique">
+            <option value="Agir dans des environnements variés" <?= $fiche['competences'] === 'Agir dans des environnements variés' ? 'selected' : '' ?>>Agir dans des environnements variés</option>
+            <option value="Adapter ses déplacements à des contraintes" <?= $fiche['competences'] === 'Adapter ses déplacements à des contraintes' ? 'selected' : '' ?>>Adapter ses déplacements à des contraintes</option>
+            <option value="Coopérer et s'opposer individuellement ou collectivement" <?= $fiche['competences'] === 'Coopérer et s\'opposer individuellement ou collectivement' ? 'selected' : '' ?>>Coopérer et s'opposer individuellement ou collectivement</option>
+            <option value="Exprimer des intentions par le geste" <?= $fiche['competences'] === 'Exprimer des intentions par le geste' ? 'selected' : '' ?>>Exprimer des intentions par le geste</option>
+            <option value="Apprendre à respecter des règles" <?= $fiche['competences'] === 'Apprendre à respecter des règles' ? 'selected' : '' ?>>Apprendre à respecter des règles</option>
+            <option value="Développer sa motricité fine et globale" <?= $fiche['competences'] === 'Développer sa motricité fine et globale' ? 'selected' : '' ?>>Développer sa motricité fine et globale</option>
+            <option value="Se repérer dans l'espace avec son corps" <?= $fiche['competences'] === 'Se repérer dans l\'espace avec son corps' ? 'selected' : '' ?>>Se repérer dans l'espace avec son corps</option>
+          </optgroup>
+          <optgroup label="Agir, s'exprimer, comprendre à travers les activités artistiques">
+            <option value="Expérimenter les matériaux, les outils, les supports" <?= $fiche['competences'] === 'Expérimenter les matériaux, les outils, les supports' ? 'selected' : '' ?>>Expérimenter les matériaux, les outils, les supports</option>
+            <option value="Créer des productions plastiques et visuelles" <?= $fiche['competences'] === 'Créer des productions plastiques et visuelles' ? 'selected' : '' ?>>Créer des productions plastiques et visuelles</option>
+            <option value="Observer et décrire des œuvres" <?= $fiche['competences'] === 'Observer et décrire des œuvres' ? 'selected' : '' ?>>Observer et décrire des œuvres</option>
+            <option value="Explorer des univers sonores" <?= $fiche['competences'] === 'Explorer des univers sonores' ? 'selected' : '' ?>>Explorer des univers sonores</option>
+            <option value="Participer à des jeux vocaux et corporels" <?= $fiche['competences'] === 'Participer à des jeux vocaux et corporels' ? 'selected' : '' ?>>Participer à des jeux vocaux et corporels</option>
+            <option value="Chanter seul et en groupe" <?= $fiche['competences'] === 'Chanter seul et en groupe' ? 'selected' : '' ?>>Chanter seul et en groupe</option>
+            <option value="Jouer avec sa voix et son corps" <?= $fiche['competences'] === 'Jouer avec sa voix et son corps' ? 'selected' : '' ?>>Jouer avec sa voix et son corps</option>
+            <option value="Imaginer, inventer, interpréter" <?= $fiche['competences'] === 'Imaginer, inventer, interpréter' ? 'selected' : '' ?>>Imaginer, inventer, interpréter</option>
+          </optgroup>
+          <optgroup label="Construire les premiers outils pour structurer sa pensée">
+            <option value="Dénombrer des quantités" <?= $fiche['competences'] === 'Dénombrer des quantités' ? 'selected' : '' ?>>Dénombrer des quantités</option>
+            <option value="Associer un nombre à une quantité" <?= $fiche['competences'] === 'Associer un nombre à une quantité' ? 'selected' : '' ?>>Associer un nombre à une quantité</option>
+            <option value="Utiliser le comptage pour résoudre des problèmes" <?= $fiche['competences'] === 'Utiliser le comptage pour résoudre des problèmes' ? 'selected' : '' ?>>Utiliser le comptage pour résoudre des problèmes</option>
+            <option value="Comprendre les nombres comme positions" <?= $fiche['competences'] === 'Comprendre les nombres comme positions' ? 'selected' : '' ?>>Comprendre les nombres comme positions</option>
+            <option value="Utiliser les premiers symboles mathématiques" <?= $fiche['competences'] === 'Utiliser les premiers symboles mathématiques' ? 'selected' : '' ?>>Utiliser les premiers symboles mathématiques</option>
+            <option value="Reproduire, compléter, créer des suites logiques" <?= $fiche['competences'] === 'Reproduire, compléter, créer des suites logiques' ? 'selected' : '' ?>>Reproduire, compléter, créer des suites logiques</option>
+            <option value="Reconnaître et nommer des formes" <?= $fiche['competences'] === 'Reconnaître et nommer des formes' ? 'selected' : '' ?>>Reconnaître et nommer des formes</option>
+            <option value="Comparer, classer des objets selon des critères" <?= $fiche['competences'] === 'Comparer, classer des objets selon des critères' ? 'selected' : '' ?>>Comparer, classer des objets selon des critères</option>
+            <option value="Se repérer dans le temps court (journée, semaine)" <?= $fiche['competences'] === 'Se repérer dans le temps court (journée, semaine)' ? 'selected' : '' ?>>Se repérer dans le temps court (journée, semaine)</option>
+          </optgroup>
+          <optgroup label="Explorer le monde">
+            <option value="Découvrir les objets, matières, phénomènes du vivant" <?= $fiche['competences'] === 'Découvrir les objets, matières, phénomènes du vivant' ? 'selected' : '' ?>>Découvrir les objets, matières, phénomènes du vivant</option>
+            <option value="Utiliser ses sens pour observer" <?= $fiche['competences'] === 'Utiliser ses sens pour observer' ? 'selected' : '' ?>>Utiliser ses sens pour observer</option>
+            <option value="Identifier les caractéristiques du vivant et des objets" <?= $fiche['competences'] === 'Identifier les caractéristiques du vivant et des objets' ? 'selected' : '' ?>>Identifier les caractéristiques du vivant et des objets</option>
+            <option value="Se repérer dans le temps (jours, mois, saisons)" <?= $fiche['competences'] === 'Se repérer dans le temps (jours, mois, saisons)' ? 'selected' : '' ?>>Se repérer dans le temps (jours, mois, saisons)</option>
+            <option value="Se repérer dans l'espace (école, classe, parcours)" <?= $fiche['competences'] === 'Se repérer dans l\'espace (école, classe, parcours)' ? 'selected' : '' ?>>Se repérer dans l'espace (école, classe, parcours)</option>
+            <option value="Découvrir l'usage d'objets techniques simples" <?= $fiche['competences'] === 'Découvrir l\'usage d\'objets techniques simples' ? 'selected' : '' ?>>Découvrir l'usage d'objets techniques simples</option>
+            <option value="Manipuler des outils numériques" <?= $fiche['competences'] === 'Manipuler des outils numériques' ? 'selected' : '' ?>>Manipuler des outils numériques</option>
+            <option value="Observer les effets de ses actions sur l'environnement" <?= $fiche['competences'] === 'Observer les effets de ses actions sur l\'environnement' ? 'selected' : '' ?>>Observer les effets de ses actions sur l'environnement</option>
+          </optgroup>
+        </select>
+      </div>
       <div id="competences_scccc_container" style="display: none;">
-        <select name="competences_scccc">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Compétence du SCCCC</label>
+        <select name="competences_scccc" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
           <option value="">-- Sélectionnez une compétence du SCCCC --</option>
           <option value="Comprendre, s'exprimer en utilisant la langue française à l'oral et à l'écrit" <?= $fiche['competences_scccc'] === 'Comprendre, s\'exprimer en utilisant la langue française à l\'oral et à l\'écrit' ? 'selected' : '' ?>>Comprendre, s'exprimer en utilisant la langue française à l'oral et à l'écrit</option>
           <option value="Comprendre, s'exprimer en utilisant une langue étrangère et, le cas échéant, une langue régionale" <?= $fiche['competences_scccc'] === 'Comprendre, s\'exprimer en utilisant une langue étrangère et, le cas échéant, une langue régionale' ? 'selected' : '' ?>>Comprendre, s'exprimer en utilisant une langue étrangère et, le cas échéant, une langue régionale</option>
@@ -171,36 +201,66 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
           <option value="Raisonner, imaginer, élaborer, produire" <?= $fiche['competences_scccc'] === 'Raisonner, imaginer, élaborer, produire' ? 'selected' : '' ?>>Raisonner, imaginer, élaborer, produire</option>
         </select>
       </div>
-      <textarea name="afc" placeholder="AFC"><?= htmlspecialchars($fiche['afc']) ?></textarea>
-      <textarea name="prerequis" placeholder="Prérequis"><?= htmlspecialchars($fiche['prerequis']) ?></textarea>
-      <textarea name="evaluation" placeholder="Modalités d’évaluation"><?= htmlspecialchars($fiche['evaluation']) ?></textarea>
-      <textarea name="bilan" placeholder="Bilan pédagogique et didactique"><?= htmlspecialchars($fiche['bilan']) ?></textarea>
-      <textarea name="prolongement" placeholder="Prolongement(s) possible(s)"><?= htmlspecialchars($fiche['prolongement']) ?></textarea>
-      <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)"><?= htmlspecialchars($fiche['remediation']) ?></textarea>
-      <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" value="<?= htmlspecialchars($fiche['nom_enseignant']) ?>">
-
-      <h3>Déroulement de la séance</h3>
-      <table id="deroulement-table" border="1" cellpadding="4" cellspacing="0" width="100%">
-        <thead>
-          <tr>
-            <th>Phase & durée</th>
-            <th>Déroulement</th>
-            <th>Consigne</th>
-            <th>Rôle enseignant</th>
-            <th>Rôle élève</th>
-            <th>Différenciation</th>
-            <th>Matériel</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">AFC</label>
+          <textarea name="afc" placeholder="AFC" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['afc']) ?></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Prérequis</label>
+          <textarea name="prerequis" placeholder="Prérequis" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['prerequis']) ?></textarea>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Modalités d'évaluation</label>
+          <textarea name="evaluation" placeholder="Modalités d'évaluation" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['evaluation']) ?></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Bilan pédagogique et didactique</label>
+          <textarea name="bilan" placeholder="Bilan pédagogique et didactique" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['bilan']) ?></textarea>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Prolongement(s) possible(s)</label>
+          <textarea name="prolongement" placeholder="Prolongement(s) possible(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['prolongement']) ?></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Remédiation(s) éventuelle(s)</label>
+          <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['remediation']) ?></textarea>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom de l'enseignant</label>
+        <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" value="<?= htmlspecialchars($fiche['nom_enseignant']) ?>" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+      </div>
+      <hr class="my-6 border-gray-200">
+      <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>
+      <div class="overflow-x-auto">
+        <table id="deroulement-table" class="min-w-full w-full border border-gray-200 rounded-lg text-sm bg-gray-50">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Phase & durée</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-56">Déroulement</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Consigne</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Rôle enseignant</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Rôle élève</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-48">Différenciation</th>
+              <th class="px-4 py-2 border-b whitespace-normal w-40">Matériel</th>
+              <th class="px-2 py-2 border-b w-10"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <button type="button" onclick="addDeroulementRow()" class="mt-4 mb-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
-      <br><br>
-      <button type="submit">💾 Enregistrer les modifications</button>
+      <div class="flex justify-end mt-8">
+        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">💾 Enregistrer la fiche</button>
+      </div>
     </form>
-  </div>
+  </main>
 
   <script>
     // Fonction pour filtrer les compétences en fonction du domaine sélectionné
@@ -253,19 +313,69 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
     function addDeroulementRow(data = {}) {
       const table = document.querySelector('#deroulement-table tbody');
       const row = document.createElement('tr');
-      const champs = ['phase', 'deroulement', 'consignes', 'role_enseignant', 'role_eleve', 'differenciation', 'materiel'];
-      champs.forEach(name => {
-        const cell = document.createElement('td');
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = name + '[]';
-        input.value = data[name] || '';
-        cell.appendChild(input);
-        row.appendChild(cell);
+      // On va utiliser une seule cellule qui contient toute la structure UX
+      const cell = document.createElement('td');
+      cell.colSpan = 8;
+      // Bloc principal
+      const bloc = document.createElement('div');
+      bloc.className = 'space-y-2 border rounded-lg p-3 bg-white mb-2 shadow';
+      // Ligne 1 : 3 champs côte à côte
+      const ligne1 = document.createElement('div');
+      ligne1.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
+      const champs1 = [
+        {name: 'phase', label: 'Phase & durée'},
+        {name: 'deroulement', label: 'Déroulement'},
+        {name: 'consignes', label: 'Consigne'}
+      ];
+      champs1.forEach(({name, label}) => {
+        const group = document.createElement('div');
+        const lab = document.createElement('label');
+        lab.className = 'block text-xs font-semibold text-gray-700 mb-1';
+        lab.textContent = label;
+        const textarea = document.createElement('textarea');
+        textarea.name = name + '[]';
+        textarea.value = data[name] || '';
+        textarea.className = 'w-full min-h-[2.5rem] p-2 border border-gray-300 rounded resize-y';
+        group.appendChild(lab);
+        group.appendChild(textarea);
+        ligne1.appendChild(group);
       });
-      const remove = document.createElement('td');
-      remove.innerHTML = '<button type="button" onclick="this.closest(\'tr\').remove()">🗑️</button>';
-      row.appendChild(remove);
+      bloc.appendChild(ligne1);
+      // Ligne 2 : 4 champs côte à côte
+      const ligne2 = document.createElement('div');
+      ligne2.className = 'grid grid-cols-1 md:grid-cols-4 gap-4 mt-2';
+      const champs2 = [
+        {name: 'role_enseignant', label: 'Rôle enseignant'},
+        {name: 'role_eleve', label: 'Rôle élève'},
+        {name: 'differenciation', label: 'Différenciation'},
+        {name: 'materiel', label: 'Matériel'}
+      ];
+      champs2.forEach(({name, label}) => {
+        const group = document.createElement('div');
+        const lab = document.createElement('label');
+        lab.className = 'block text-xs font-semibold text-gray-700 mb-1';
+        lab.textContent = label;
+        const textarea = document.createElement('textarea');
+        textarea.name = name + '[]';
+        textarea.value = data[name] || '';
+        textarea.className = 'w-full min-h-[2.5rem] p-2 border border-gray-300 rounded resize-y';
+        group.appendChild(lab);
+        group.appendChild(textarea);
+        ligne2.appendChild(group);
+      });
+      // Bouton supprimer à droite
+      const btnGroup = document.createElement('div');
+      btnGroup.className = 'flex items-end justify-end mt-2';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center justify-center ml-2';
+      btn.innerText = '🗑️';
+      btn.onclick = function() { bloc.closest('tr').remove(); };
+      btnGroup.appendChild(btn);
+      ligne2.appendChild(btnGroup);
+      bloc.appendChild(ligne2);
+      cell.appendChild(bloc);
+      row.appendChild(cell);
       table.appendChild(row);
     }
 

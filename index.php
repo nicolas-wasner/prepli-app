@@ -1,63 +1,25 @@
 <?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <title>Accueil – Application PrepLi</title>
-  <style>
-    .container {
-      text-align: center;
-      margin-top: 4rem;
-    }
-    .container h1 {
-      font-size: 2.2rem;
-      margin-bottom: 2rem;
-    }
-    .menu {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-width: 320px;
-      margin: 0 auto;
-    }
-    .menu a {
-      display: block;
-      background-color: #3498db;
-      color: white;
-      padding: 1rem;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 8px;
-      transition: background 0.3s;
-    }
-    .menu a:hover {
-      background-color: #287bb5;
-    }
-    .user-box {
-      margin-top: 2rem;
-      font-size: 1rem;
-      color: #555;
-    }
-  </style>
-</head>
-<body>
+<?php $page_title = 'Accueil – Application PrepLi'; include __DIR__ . '/includes/head.php'; ?>
+<body class="font-sans bg-gray-50 min-h-screen">
 <?php include __DIR__ . '/includes/header.php'; ?>
-  <div class="container">
-    <h1>Bienvenue dans l'application PrepLi 📚</h1>
+  <div class="flex flex-col items-center justify-center min-h-[80vh] px-4 pt-16">
+    <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">Bienvenue dans l'application PrepLi 📚</h1>
 
-    <div class="menu">
+    <div class="flex flex-col gap-4 w-full max-w-xs">
       <?php if (isset($_SESSION['utilisateur_id'])): ?>
-        <a href="/fiches">📄 Mes fiches</a>
-        <a href="/sequences">🧩 Mes séquences</a>
-        <a href="/logout">🚪 Se déconnecter</a>
+        <a href="/fiches" class="block bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-semibold text-center shadow transition">📄 Mes fiches</a>
+        <a href="/sequences" class="block bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-semibold text-center shadow transition">🧩 Mes séquences</a>
+        <a href="/logout" class="block bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 px-6 rounded-lg text-lg font-semibold text-center shadow transition">🚪 Se déconnecter</a>
       <?php else: ?>
-        <a href="/login">🔐 Connexion</a>
-        <a href="/inscription">🆕 Créer un compte</a>
+        <a href="/login" class="block bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-semibold text-center shadow transition">🔐 Connexion</a>
+        <a href="/inscription" class="block bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg text-lg font-semibold text-center shadow transition">🆕 Créer un compte</a>
       <?php endif; ?>
     </div>
 
     <?php if (isset($_SESSION['utilisateur_nom'])): ?>
-      <div class="user-box">
+      <div class="mt-8 text-gray-600 text-base text-center">
         Connecté en tant que <strong><?= htmlspecialchars($_SESSION['utilisateur_nom']) ?></strong>
       </div>
     <?php endif; ?>
