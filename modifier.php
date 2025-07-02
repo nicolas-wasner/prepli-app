@@ -239,18 +239,6 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>
       <div class="overflow-x-auto">
         <table id="deroulement-table" class="min-w-full w-full border border-gray-200 rounded-lg text-sm bg-gray-50">
-          <thead class="bg-gray-100">
-            <tr>
-              <th class="px-4 py-2 border-b whitespace-normal w-40">Phase & durée</th>
-              <th class="px-4 py-2 border-b whitespace-normal w-56">Déroulement</th>
-              <th class="px-4 py-2 border-b whitespace-normal w-40">Consigne</th>
-              <th class="px-4 py-2 border-b whitespace-normal w-40">Rôle enseignant</th>
-              <th class="px-4 py-2 border-b whitespace-normal w-40">Rôle élève</th>
-              <th class="px-4 py-2 border-b whitespace-normal w-48">Différenciation</th>
-              <th class="px-4 py-2 border-b whitespace-normal w-40">Matériel</th>
-              <th class="px-2 py-2 border-b w-10"></th>
-            </tr>
-          </thead>
           <tbody></tbody>
         </table>
       </div>
