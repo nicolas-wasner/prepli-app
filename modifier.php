@@ -63,8 +63,8 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
 <?php $page_title = 'Modifier fiche'; include __DIR__ . '/includes/head.php'; ?>
 <body class="font-sans bg-gray-50 min-h-screen">
   <?php include __DIR__ . '/includes/header.php'; ?>
-  <main class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 my-10 pt-16">
-    <h1 class="text-2xl font-bold text-blue-700 mb-6 flex items-center gap-2">✏️ Modifier la fiche <span class="text-gray-900">« <?= htmlspecialchars((string) $fiche['seance']) ?> »</span></h1>
+  <main class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 my-10 pt-20">
+    <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">Modifier la fiche</h1>
     <?php if ($success): ?>
       <div class="mb-6 rounded bg-green-50 border border-green-200 text-green-800 px-4 py-3 flex items-center gap-2">
         <span>✅</span> <span><?= $success ?></span>
@@ -152,45 +152,45 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">AFC</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">AFC <span class="text-xs text-gray-500">(optionnel)</span></label>
           <textarea name="afc" placeholder="AFC" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['afc']) ?></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Prérequis</label>
-          <textarea name="prerequis" placeholder="Prérequis" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['prerequis']) ?></textarea>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Prérequis <span class="text-red-500">*</span></label>
+          <textarea name="prerequis" placeholder="Prérequis" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['prerequis']) ?></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Critère de réalisation</label>
-          <textarea name="critere_realisation" placeholder="Comment je fais pour réussir" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['critere_realisation'] ?? '') ?></textarea>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Critère de réalisation <span class="text-red-500">*</span></label>
+          <textarea name="critere_realisation" placeholder="Comment je fais pour réussir" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['critere_realisation'] ?? '') ?></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Critère de réussite</label>
-          <textarea name="critere_reussite" placeholder="Comment je sais que j'ai réussi" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['critere_reussite'] ?? '') ?></textarea>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Critère de réussite <span class="text-red-500">*</span></label>
+          <textarea name="critere_reussite" placeholder="Comment je sais que j'ai réussi" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['critere_reussite'] ?? '') ?></textarea>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Modalités d'évaluation</label>
-          <textarea name="evaluation" placeholder="Modalités d'évaluation" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['evaluation']) ?></textarea>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Modalités d'évaluation <span class="text-red-500">*</span></label>
+          <textarea name="evaluation" placeholder="Modalités d'évaluation" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['evaluation']) ?></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Bilan pédagogique et didactique</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Bilan pédagogique et didactique <span class="text-xs text-gray-500">(optionnel)</span></label>
           <textarea name="bilan" placeholder="Bilan pédagogique et didactique" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['bilan']) ?></textarea>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Prolongement(s) possible(s)</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Prolongement(s) possible(s) <span class="text-xs text-gray-500">(optionnel)</span></label>
           <textarea name="prolongement" placeholder="Prolongement(s) possible(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['prolongement']) ?></textarea>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Remédiation(s) éventuelle(s)</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Remédiation(s) éventuelle(s) <span class="text-xs text-gray-500">(optionnel)</span></label>
           <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['remediation']) ?></textarea>
         </div>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nom de l'enseignant</label>
-        <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" value="<?= htmlspecialchars($fiche['nom_enseignant']) ?>" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Nom de l'enseignant <span class="text-red-500">*</span></label>
+        <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" value="<?= htmlspecialchars($fiche['nom_enseignant']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
       </div>
       <hr class="my-6 border-gray-200">
       <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>

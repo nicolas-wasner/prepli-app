@@ -45,10 +45,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="fr">
 <?php $page_title = 'Ajouter une fiche'; include __DIR__ . '/includes/head.php'; ?>
-<body>
+<body class="font-sans bg-gray-50 min-h-screen">
   <?php include __DIR__ . '/includes/header.php'; ?>
-  <div class="container pt-16">
-    <h1>Créer une fiche de préparation</h1>
+  <div class="max-w-3xl mx-auto px-4 py-12 pt-20">
+    <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">Créer une fiche de préparation</h1>
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
     <form action="" method="post" class="space-y-6 max-w-2xl bg-white rounded-xl shadow p-8 mt-8">
@@ -221,17 +221,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label class="block mb-2 font-semibold text-gray-700">AFC <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="afc" placeholder="AFC" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Prérequis <span class="text-red-500">❌</span> :
+      <label class="block mb-2 font-semibold text-gray-700">Prérequis <span class="text-red-500">*</span> :
         <textarea name="prerequis" placeholder="Prérequis" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Critère de réalisation :
-        <textarea name="critere_realisation" placeholder="Comment je fais pour réussir" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      <label class="block mb-2 font-semibold text-gray-700">Critère de réalisation <span class="text-red-500">*</span> :
+        <textarea name="critere_realisation" placeholder="Comment je fais pour réussir" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Critère de réussite :
-        <textarea name="critere_reussite" placeholder="Comment je sais que j'ai réussi" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      <label class="block mb-2 font-semibold text-gray-700">Critère de réussite <span class="text-red-500">*</span> :
+        <textarea name="critere_reussite" placeholder="Comment je sais que j'ai réussi" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Modalités d'évaluation <span class="text-red-500">❌</span> :
-        <textarea name="evaluation" placeholder="Modalités d'évaluation" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      <label class="block mb-2 font-semibold text-gray-700">Modalités d'évaluation <span class="text-red-500">*</span> :
+        <textarea name="evaluation" placeholder="Modalités d'évaluation" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
       <label class="block mb-2 font-semibold text-gray-700">Bilan pédagogique et didactique <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="bilan" placeholder="Bilan pédagogique et didactique" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
@@ -242,7 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label class="block mb-2 font-semibold text-gray-700">Remédiation(s) éventuelle(s) <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Nom de l'enseignant <span class="text-red-500">❌</span> :
+      <label class="block mb-2 font-semibold text-gray-700">Nom de l'enseignant <span class="text-red-500">*</span> :
         <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
 

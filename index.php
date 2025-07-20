@@ -4,7 +4,7 @@
 <?php $page_title = 'Accueil – Application PrepLi'; include __DIR__ . '/includes/head.php'; ?>
 <body class="font-sans bg-gray-50 min-h-screen">
 <?php include __DIR__ . '/includes/header.php'; ?>
-  <div class="flex flex-col items-center justify-center min-h-[80vh] px-4 pt-16">
+  <div class="flex flex-col items-center justify-center min-h-[80vh] px-4 pt-20">
     <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">Bienvenue dans l'application PrepLi 📚</h1>
 
     <div class="flex flex-col gap-4 w-full max-w-xs">
