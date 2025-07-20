@@ -8,8 +8,35 @@ if (!isset($_SESSION['utilisateur_id'])) {
 }
 
 $success = '';
+$limiteAtteinte = false;
+$limiteMessage = '';
+// Récupère la limite personnalisée pour l'utilisateur
+$stmt = $pdo->prepare("SELECT limite_fiches, limite_sequences FROM utilisateurs WHERE id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$limites = $stmt->fetch();
+$limiteFiches = $limites['limite_fiches'] ?? 1;
+$limiteSequences = $limites['limite_sequences'] ?? 1;
+// Vérifie la limite fiche
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM fiches WHERE utilisateur_id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$nbFiches = $stmt->fetchColumn();
+if ($nbFiches >= $limiteFiches) {
+  $limiteAtteinte = true;
+  $limiteMessage = "❌ Limite atteinte : vous ne pouvez créer que $limiteFiches fiche(s).";
+}
+// Vérifie la limite séquence
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM sequences WHERE utilisateur_id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$nbSequences = $stmt->fetchColumn();
+if ($nbSequences >= $limiteSequences) {
+  $limiteAtteinte = true;
+  $limiteMessage = "❌ Limite atteinte : vous ne pouvez créer que $limiteFiches fiche(s) et $limiteSequences séquence(s).";
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $limiteAtteinte) {
+  $success = '';
+  $erreur = $limiteMessage;
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $afc = isset($_POST['afc']) ? json_encode($_POST['afc']) : '';
   $stmt = $pdo->prepare("INSERT INTO fiches (
     domaine, niveau, duree, sequence, seance, objectifs, competences, competences_scccc, afc,
@@ -52,9 +79,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <?php include __DIR__ . '/includes/header.php'; ?>
   <div class="max-w-3xl mx-auto px-4 py-12 pt-20">
     <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">Créer une fiche de préparation</h1>
+    <?php if ($limiteAtteinte): ?>
+      <div class="mb-6 rounded bg-red-50 border border-red-200 text-red-800 px-4 py-3 flex items-center gap-2">
+        <?= $limiteMessage ?>
+      </div>
+    <?php endif; ?>
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
 
-    <form action="" method="post" class="space-y-6 max-w-2xl bg-white rounded-xl shadow p-8 mt-8">
+    <form action="" method="post" class="space-y-6 max-w-2xl bg-white rounded-xl shadow p-8 mt-8" <?php if ($limiteAtteinte) echo 'style="pointer-events:none;opacity:0.5;"'; ?>>
       <label class="block mb-2 font-semibold text-gray-700">Domaine :
         <select name="domaine" id="domaine_select" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">-- Sélectionnez un domaine d'apprentissage --</option>

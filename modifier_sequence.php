@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="space-y-2" id="fiches-checkboxes">
         <?php foreach ($fiches as $fiche): ?>
           <label class="flex items-center gap-2 text-gray-700">
-            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>" <?= in_array($fiche['id'], $fiches_associees) ? 'checked' : '' ?> class="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 fiche-checkbox">
+            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>" <?= in_array($fiche['id'], $fiches_associees) ? 'checked' : '' ?> class="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 fiche-checkbox align-middle" style="min-width:1.25rem; min-height:1.25rem;" />
             <span><?= htmlspecialchars($fiche['sequence']) ?> – <?= htmlspecialchars($fiche['seance']) ?></span>
           </label>
         <?php endforeach; ?>

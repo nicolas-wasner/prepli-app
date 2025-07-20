@@ -11,6 +11,14 @@ $stmt = $pdo->prepare("SELECT * FROM fiches WHERE utilisateur_id = ? ORDER BY id
 $stmt->execute([$_SESSION['utilisateur_id']]);
 $fiches = $stmt->fetchAll();
 
+// Limite fiche dynamique
+$stmt = $pdo->prepare("SELECT limite_fiches FROM utilisateurs WHERE id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$limiteFiches = $stmt->fetchColumn() ?: 1;
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM fiches WHERE utilisateur_id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$nbFiches = $stmt->fetchColumn();
+$limiteFiche = $nbFiches >= $limiteFiches;
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +31,11 @@ $fiches = $stmt->fetchAll();
   <div class="flex flex-col items-center mb-8">
     <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">Mes fiches de préparation</h1>
     <p class="text-gray-600 text-center mb-6">Gérez vos fiches de préparation de séances</p>
+    <?php if ($limiteFiche): ?>
+      <div class="mb-4 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 flex items-center gap-2">
+        ⚠️ Limite atteinte : vous avez déjà créé <?= $nbFiches ?> fiche(s) (limite = <?= $limiteFiches ?>).
+      </div>
+    <?php endif; ?>
     <a href="/ajouter" class="inline-flex items-center justify-center w-full max-w-xs px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-blue-700 transition mb-4">
       <span class="text-2xl mr-2">➕</span> Ajouter une fiche
     </a>

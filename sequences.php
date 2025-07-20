@@ -18,6 +18,15 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['utilisateur_id']]);
 $sequences = $stmt->fetchAll();
+
+// Limite séquence dynamique
+$stmt = $pdo->prepare("SELECT limite_sequences FROM utilisateurs WHERE id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$limiteSequences = $stmt->fetchColumn() ?: 1;
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM sequences WHERE utilisateur_id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$nbSequences = $stmt->fetchColumn();
+$limiteSequence = $nbSequences >= $limiteSequences;
 ?>
 
 <!DOCTYPE html>
@@ -32,16 +41,17 @@ $sequences = $stmt->fetchAll();
         ✅ Séquence enregistrée ou modifiée avec succès.
       </div>
     <?php endif; ?>
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-      <div class="w-full">
-        <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">🧩 Mes séquences</h1>
-        <p class="text-gray-600 text-center">Gérez vos séquences pédagogiques</p>
-      </div>
-      <div class="mt-4 sm:mt-0">
-        <a href="/creer_sequence" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition duration-200">
-          ➕ Créer une séquence
-        </a>
-      </div>
+    <div class="flex flex-col items-center mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">🧩 Mes séquences</h1>
+      <p class="text-gray-600 text-center mb-6">Gérez vos séquences pédagogiques</p>
+      <?php if ($limiteSequence): ?>
+        <div class="mb-4 rounded bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-2 flex items-center gap-2">
+          ⚠️ Limite atteinte : vous avez déjà créé <?= $nbSequences ?> séquence(s) (limite = <?= $limiteSequences ?>).
+        </div>
+      <?php endif; ?>
+      <a href="/creer_sequence" class="inline-flex items-center justify-center w-full max-w-xs px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow hover:bg-blue-700 transition mb-4">
+        <span class="text-2xl mr-2">➕</span> Créer une séquence
+      </a>
     </div>
 
     <?php if (empty($sequences)): ?>

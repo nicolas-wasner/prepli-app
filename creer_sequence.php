@@ -9,13 +9,40 @@ if (!isset($_SESSION['utilisateur_id'])) {
 
 $success = '';
 $erreur = '';
+$limiteAtteinte = false;
+$limiteMessage = '';
+// Récupère la limite personnalisée pour l'utilisateur
+$stmt = $pdo->prepare("SELECT limite_fiches, limite_sequences FROM utilisateurs WHERE id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$limites = $stmt->fetch();
+$limiteFiches = $limites['limite_fiches'] ?? 1;
+$limiteSequences = $limites['limite_sequences'] ?? 1;
+// Vérifie la limite séquence
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM sequences WHERE utilisateur_id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$nbSequences = $stmt->fetchColumn();
+if ($nbSequences >= $limiteSequences) {
+  $limiteAtteinte = true;
+  $limiteMessage = "❌ Limite atteinte : vous ne pouvez créer que $limiteSequences séquence(s).";
+}
+// Vérifie la limite fiche
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM fiches WHERE utilisateur_id = ?");
+$stmt->execute([$_SESSION['utilisateur_id']]);
+$nbFiches = $stmt->fetchColumn();
+if ($nbFiches >= $limiteFiches) {
+  $limiteAtteinte = true;
+  $limiteMessage = "❌ Limite atteinte : vous ne pouvez créer que $limiteFiches fiche(s) et $limiteSequences séquence(s).";
+}
 
 // Récupère les fiches de l'utilisateur connecté
 $stmt = $pdo->prepare("SELECT * FROM fiches WHERE utilisateur_id = ?");
 $stmt->execute([$_SESSION['utilisateur_id']]);
 $fiches = $stmt->fetchAll();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $limiteAtteinte) {
+  $success = '';
+  $erreur = $limiteMessage;
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $titre = trim($_POST['titre']);
   $objectifs = trim($_POST['objectifs']);
   $competences = trim($_POST['competences']);
@@ -50,11 +77,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   <div class="container pt-16">
     <h1>Créer une séquence 📚</h1>
+    <?php if ($limiteAtteinte): ?>
+      <div class="mb-6 rounded bg-red-50 border border-red-200 text-red-800 px-4 py-3 flex items-center gap-2">
+        <?= $limiteMessage ?>
+      </div>
+    <?php endif; ?>
 
     <?php if ($success): ?><p style="color:green;"><?= $success ?></p><?php endif; ?>
     <?php if ($erreur): ?><p style="color:red;"><?= $erreur ?></p><?php endif; ?>
 
-    <form method="post" class="space-y-6 max-w-xl bg-white rounded-xl shadow p-8 mt-8">
+    <form method="post" class="space-y-6 max-w-xl bg-white rounded-xl shadow p-8 mt-8" <?php if ($limiteAtteinte) echo 'style="pointer-events:none;opacity:0.5;"'; ?>>
       <label class="block mb-2 font-semibold text-gray-700">Titre de la séquence :
         <input type="text" name="titre" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
@@ -82,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="space-y-2" id="fiches-checkboxes">
         <?php foreach ($fiches as $fiche): ?>
           <label class="flex items-center gap-2 text-gray-700">
-            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>" class="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 fiche-checkbox">
+            <input type="checkbox" name="fiches[]" value="<?= $fiche['id'] ?>" class="form-checkbox h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 fiche-checkbox align-middle" style="min-width:1.25rem; min-height:1.25rem;" />
             <span><?= htmlspecialchars($fiche['sequence']) ?> – <?= htmlspecialchars($fiche['seance']) ?></span>
           </label>
         <?php endforeach; ?>

@@ -16,7 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
           <a href="/fiches" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">📄 Fiches</a>
           <a href="/ajouter" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">➕ Ajouter une fiche</a>
           <a href="/sequences" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">🧩 Séquences</a>
-          <a href="/logout" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">🚪 Déconnexion</a>
+          <a href="/profile" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">👤 Profil</a>
         <?php else: ?>
           <a href="/login" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">🔐 Connexion</a>
           <a href="/inscription" class="text-white hover:bg-blue-800 hover:text-white px-3 py-2 rounded-md text-base font-medium transition">🆕 Inscription</a>
@@ -24,9 +24,9 @@ if (session_status() === PHP_SESSION_NONE) {
       </div>
       <!-- Mobile menu button -->
       <div class="md:hidden">
-        <button type="button" class="text-white hover:text-blue-200 focus:outline-none" onclick="toggleMobileMenu()">
+        <button type="button" class="bg-white rounded p-1 text-blue-700 hover:bg-blue-100 focus:outline-none" onclick="toggleMobileMenu()">
           <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="#2563eb" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
       </div>
@@ -38,7 +38,7 @@ if (session_status() === PHP_SESSION_NONE) {
           <a href="/fiches" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">📄 Fiches</a>
           <a href="/ajouter" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">➕ Ajouter une fiche</a>
           <a href="/sequences" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">🧩 Séquences</a>
-          <a href="/logout" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">🚪 Déconnexion</a>
+          <a href="/profile" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">👤 Profil</a>
         <?php else: ?>
           <a href="/login" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">🔐 Connexion</a>
           <a href="/inscription" class="text-white hover:bg-blue-800 hover:text-white block px-3 py-2 rounded-md text-base font-medium transition">🆕 Inscription</a>
