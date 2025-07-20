@@ -61,7 +61,7 @@ $sequences = $stmt->fetchAll();
               <div class="flex items-start justify-between mb-4">
                 <div class="flex-1">
                   <h3 class="text-lg font-semibold text-gray-900 mb-2"><?= htmlspecialchars($seq['titre']) ?></h3>
-                  <p class="text-sm text-gray-600 mb-3 line-clamp-3"><?= htmlspecialchars($seq['description']) ?></p>
+                  <p class="text-sm text-gray-600 mb-3 line-clamp-3"><?= htmlspecialchars($seq['objectifs']) ?></p>
                   <div class="flex items-center">
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                       <?= $seq['nb_fiches'] ?> séance<?= $seq['nb_fiches'] > 1 ? 's' : '' ?>

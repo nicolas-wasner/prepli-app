@@ -44,6 +44,10 @@ $deroulements = json_decode($fiche['deroulement_json'] ?? '[]', true);
 $competences = json_decode($fiche['competences'] ?? '[]', true);
 $competences_affichage = is_array($competences) ? implode(', ', $competences) : htmlspecialchars($fiche['competences']);
 
+// Compétences SCCCC
+$competences_scccc = json_decode($fiche['competences_scccc'] ?? '[]', true);
+$competences_scccc_affichage = is_array($competences_scccc) ? implode(', ', $competences_scccc) : htmlspecialchars($fiche['competences_scccc']);
+
 // PDF
 if ($format === 'pdf') {
     require_once __DIR__ . '/includes/tcpdf/tcpdf.php';
@@ -59,7 +63,7 @@ if ($format === 'pdf') {
         // Page footer
         public function Footer() {
             // Position at 15 mm from bottom
-            $this->SetY(-15);
+            $this->SetY(-10);
             // Set font
             $this->SetFont('helvetica', 'I', 10);
             // Teacher name
@@ -80,7 +84,7 @@ if ($format === 'pdf') {
     // Configuration du footer avec le nom de l'enseignant
     $pdf->setPrintFooter(true);
     $pdf->setFooterFont(Array('helvetica', '', 10));
-    $pdf->setFooterMargin(10);
+    $pdf->setFooterMargin(20);
     // Définir le nom de l'enseignant dans le footer
     $pdf->setNomEnseignant($fiche['nom_enseignant'] ?? '');
     $pdf->AddPage();
@@ -107,17 +111,11 @@ if ($format === 'pdf') {
     }
     $html .= '</table><br>';
 
-    // Tableau 2x2
-    $html .= '<table border="1" cellpadding="4">
-                 <tr><td><strong>Place de la séance dans la séquence :</strong><br>' . nl2br(htmlspecialchars($fiche['sequence'])) . '</td>
-                 <td><strong>Titre de la séquence :</strong><br>' . nl2br(htmlspecialchars($fiche['sequence'])) . '</td></tr>
-                </table><br>';
-
-    // Tableau 2x2
-    $html .= '<table border="1" cellpadding="4">
-                 <tr><td><strong>Compétences visé(s) :</strong><br>' . nl2br(htmlspecialchars($competences_affichage)) . '</td>
-                 <td><strong>Compétences du SCCCC :</strong><br>' . nl2br(htmlspecialchars($fiche['competences_scccc'] ?? '')) . '</td></tr>
-                </table><br>';
+    // Correction des tableaux mal formés
+    // Titre de la séquence
+    $html .= '<table border="1" cellpadding="4"><tr><td><strong>Titre de la séquence :</strong><br>' . nl2br(htmlspecialchars($fiche['sequence'])) . '</td></tr></table><br>';
+    // Compétences visées et SCCCC
+    $html .= '<table border="1" cellpadding="4"><tr><td><strong>Compétences visé(s) :</strong><br>' . nl2br(htmlspecialchars($competences_affichage)) . '</td><td><strong>Compétences du SCCCC :</strong><br>' . nl2br(htmlspecialchars($competences_scccc_affichage)) . '</td></tr></table><br>';
 
     // Prérequis
     $html .= '<table border="1" cellpadding="4"><tr><td><strong>Prérequis :</strong><br>' . nl2br(htmlspecialchars($fiche['prerequis'])) . '</td></tr></table><br>';
@@ -134,12 +132,23 @@ if ($format === 'pdf') {
     $html .= '<table border="1" cellpadding="4"><tr><td><strong>Objectif(s) visé(s) :</strong><br>' . nl2br(htmlspecialchars($fiche['objectifs'])) . '</td></tr></table><br>';
 
     // AFC
-    $html .= '<table border="1" cellpadding="4"><tr><td><strong>AFC :</strong><br>' . nl2br(htmlspecialchars($fiche['afc'])) . '</td></tr></table><br>';
+    $afc = $fiche['afc'];
+    if ($afc) {
+      $afc_decoded = json_decode($afc, true);
+      if (is_array($afc_decoded)) {
+        $afc_affichage = implode(', ', $afc_decoded);
+      } else {
+        $afc_affichage = htmlspecialchars($afc);
+      }
+    } else {
+      $afc_affichage = '';
+    }
+    $html .= '<table border="1" cellpadding="4"><tr><td><strong>AFC :</strong><br>' . nl2br($afc_affichage) . '</td></tr></table><br>';
 
     // Déroulement de la séance
     $html .= '<h3>Déroulement de la séance</h3>';
     $html .= '<table border="1" cellpadding="4"><tr>';
-    $headers = ["Phase et durée", "Déroulement", "Consigne", "Rôle de l'enseignant", "Rôle de l'élève", "Différenciation", "Matériel"];
+    $headers = ["Phase et durée", "Déroulement et modalités de travail", "Consigne", "Rôle de l'enseignant", "Rôle de l'élève", "Différenciation", "Matériel"];
     foreach ($headers as $h) {
         $html .= '<th>' . htmlspecialchars($h) . '</th>';
     }
@@ -204,7 +213,18 @@ if ($format === 'word') {
     // Prérequis
     $section->addTextBreak();
     $section->addText("AFC :", ['bold' => true]);
-    $section->addText($fiche['afc']);
+    $afc = $fiche['afc'];
+    if ($afc) {
+      $afc_decoded = json_decode($afc, true);
+      if (is_array($afc_decoded)) {
+        $afc_affichage = implode(', ', $afc_decoded);
+      } else {
+        $afc_affichage = $afc;
+      }
+    } else {
+      $afc_affichage = '';
+    }
+    $section->addText($afc_affichage);
 
     // Déroulement
     $section->addTextBreak();

@@ -10,12 +10,13 @@ if (!isset($_SESSION['utilisateur_id'])) {
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $afc = isset($_POST['afc']) ? json_encode($_POST['afc']) : '';
   $stmt = $pdo->prepare("INSERT INTO fiches (
     domaine, niveau, duree, sequence, seance, objectifs, competences, competences_scccc, afc,
-    prerequis, nom_enseignant, deroulement_json,
+    prerequis, critere_realisation, critere_reussite, nom_enseignant, deroulement_json,
     evaluation, bilan, prolongement, remediation,
     utilisateur_id
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
   $stmt->execute([
     $_POST['domaine'],
@@ -25,9 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_POST['seance'],
     $_POST['objectifs'],
     json_encode($_POST['competences']), // ici
-    $_POST['competences_scccc'] ?? '',
-    $_POST['afc'],
+    json_encode($_POST['competences_scccc']), // ici
+    $afc,
     $_POST['prerequis'],
+    $_POST['critere_realisation'],
+    $_POST['critere_reussite'],
     $_POST['nom_enseignant'],
     $_POST['deroulement_json'],
     $_POST['evaluation'],
@@ -148,7 +151,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             "Manipuler des outils numériques",
             "Observer les effets de ses actions sur l'environnement"
           ],
-          // Ajoutez les autres domaines si besoin
+          // Cycle 2 et 3
+          "Les langages pour penser et communiquer": [
+            "Lire, comprendre et interpréter des textes variés",
+            "Écrire des textes variés",
+            "S'exprimer à l'oral avec clarté",
+            "Comprendre et utiliser le vocabulaire",
+            "Maîtriser l'orthographe et la grammaire",
+            "Utiliser les mathématiques pour résoudre des problèmes",
+            "Communiquer en langues vivantes étrangères"
+          ],
+          "Les méthodes et outils pour apprendre": [
+            "Organiser son travail et ses apprentissages",
+            "Utiliser des outils numériques pour apprendre",
+            "Rechercher, trier et exploiter des informations",
+            "Travailler en groupe et coopérer",
+            "Développer l'autonomie et l'initiative"
+          ],
+          "La formation de la personne et du citoyen": [
+            "Respecter les règles de vie collective",
+            "Développer l'esprit critique et le jugement",
+            "S'engager dans un projet collectif",
+            "Comprendre les valeurs de la République",
+            "Prendre des responsabilités dans la classe ou l'école"
+          ],
+          "Les systèmes naturels et techniques": [
+            "Observer et décrire le monde du vivant",
+            "Comprendre le fonctionnement des objets techniques",
+            "Réaliser des expériences scientifiques",
+            "Développer des attitudes responsables envers l'environnement"
+          ],
+          "Les représentations du monde et l'activité humaine": [
+            "Se repérer dans l'espace et le temps",
+            "Comprendre l'histoire et la géographie",
+            "Découvrir les arts et la culture",
+            "Analyser des documents historiques ou géographiques"
+          ],
+          // Transversal
+          "Langues vivantes étrangères et régionales": [
+            "Comprendre et s'exprimer à l'oral",
+            "Lire et comprendre des textes simples",
+            "Écrire des messages courts",
+            "Découvrir d'autres cultures"
+          ],
+          "Éducation au développement durable": [
+            "Comprendre les enjeux du développement durable",
+            "Adopter des comportements éco-responsables",
+            "Participer à des projets de protection de l'environnement"
+          ],
+          "Éducation artistique et culturelle": [
+            "Pratiquer des activités artistiques",
+            "Découvrir des œuvres et des artistes",
+            "Exprimer ses émotions et ses idées par l'art",
+            "Participer à des projets culturels"
+          ]
         };
         const domaineSelect = document.getElementById('domaine_select');
         const competencesList = document.getElementById('competences_list');
@@ -198,29 +254,218 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
       </script>
       <div id="competences_scccc_container" style="display: none;">
-        <label class="block mb-2 font-semibold text-gray-700">Compétence du SCCCC :
-          <select name="competences_scccc" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="">-- Sélectionnez une compétence du SCCCC --</option>
-            <option value="Comprendre, s'exprimer en utilisant la langue française à l'oral et à l'écrit">Comprendre, s'exprimer en utilisant la langue française à l'oral et à l'écrit</option>
-            <option value="Comprendre, s'exprimer en utilisant une langue étrangère et, le cas échéant, une langue régionale">Comprendre, s'exprimer en utilisant une langue étrangère et, le cas échéant, une langue régionale</option>
-            <option value="Comprendre, s'exprimer en utilisant les langages mathématiques, scientifiques et informatiques">Comprendre, s'exprimer en utilisant les langages mathématiques, scientifiques et informatiques</option>
-            <option value="Comprendre, s'exprimer en utilisant les langages des arts et du corps">Comprendre, s'exprimer en utilisant les langages des arts et du corps</option>
-            <option value="Apprendre à apprendre, seul ou collectivement, en classe ou en dehors">Apprendre à apprendre, seul ou collectivement, en classe ou en dehors</option>
-            <option value="Maîtriser les techniques usuelles de l'information et de la documentation">Maîtriser les techniques usuelles de l'information et de la documentation</option>
-            <option value="Mobiliser des outils numériques pour apprendre, échanger, communiquer">Mobiliser des outils numériques pour apprendre, échanger, communiquer</option>
-            <option value="Comprendre les règles et le droit">Comprendre les règles et le droit</option>
-            <option value="Respecter autrui et accepter les différences">Respecter autrui et accepter les différences</option>
-            <option value="Agir de façon éthique et responsable">Agir de façon éthique et responsable</option>
-            <option value="Faire preuve de réflexion et de discernement">Faire preuve de réflexion et de discernement</option>
-            <option value="Se situer dans l'espace et dans le temps">Se situer dans l'espace et dans le temps</option>
-            <option value="Analyser et comprendre les organisations humaines et les représentations du monde">Analyser et comprendre les organisations humaines et les représentations du monde</option>
-            <option value="Raisonner, imaginer, élaborer, produire">Raisonner, imaginer, élaborer, produire</option>
-          </select>
-        </label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Compétence(s) du SCCCC</label>
+        <div id="competences_scccc_list"></div>
+        <button type="button" id="add_competence_scccc_btn" class="mb-4 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">➕ Ajouter une compétence SCCCC</button>
       </div>
-      <label class="block mb-2 font-semibold text-gray-700">AFC <span class="text-xs text-gray-500">(optionnel)</span> :
-        <textarea name="afc" placeholder="AFC" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-      </label>
+      <script>
+        const competencesScccc = [
+          "Comprendre, s'exprimer en utilisant la langue française à l'oral et à l'écrit",
+          "Comprendre, s'exprimer en utilisant une langue étrangère et, le cas échéant, une langue régionale",
+          "Comprendre, s'exprimer en utilisant les langages mathématiques, scientifiques et informatiques",
+          "Comprendre, s'exprimer en utilisant les langages des arts et du corps",
+          "Apprendre à apprendre, seul ou collectivement, en classe ou en dehors",
+          "Maîtriser les techniques usuelles de l'information et de la documentation",
+          "Mobiliser des outils numériques pour apprendre, échanger, communiquer",
+          "Comprendre les règles et le droit",
+          "Respecter autrui et accepter les différences",
+          "Agir de façon éthique et responsable",
+          "Faire preuve de réflexion et de discernement",
+          "Se situer dans l'espace et dans le temps",
+          "Analyser et comprendre les organisations humaines et les représentations du monde",
+          "Raisonner, imaginer, élaborer, produire"
+        ];
+        const competencesSccccList = document.getElementById('competences_scccc_list');
+        const addCompetenceSccccBtn = document.getElementById('add_competence_scccc_btn');
+        function renderCompetenceSccccSelect(selectedValue = '') {
+          const select = document.createElement('select');
+          select.name = 'competences_scccc[]';
+          select.className = 'mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2';
+          select.style.width = '100%';
+          select.style.maxWidth = '100%';
+          select.style.whiteSpace = 'normal';
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Sélectionnez une compétence du SCCCC --';
+          select.appendChild(defaultOption);
+          competencesScccc.forEach(comp => {
+            const option = document.createElement('option');
+            option.value = comp;
+            option.textContent = comp;
+            option.title = comp;
+            option.style.whiteSpace = 'normal';
+            if (comp === selectedValue) option.selected = true;
+            select.appendChild(option);
+          });
+          return select;
+        }
+        function addCompetenceSccccRow(selectedValue = '') {
+          const row = document.createElement('div');
+          row.className = 'flex items-center mb-2';
+          const select = renderCompetenceSccccSelect(selectedValue);
+          row.appendChild(select);
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'ml-2 px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200';
+          removeBtn.textContent = '🗑️';
+          removeBtn.onclick = () => row.remove();
+          row.appendChild(removeBtn);
+          competencesSccccList.appendChild(row);
+        }
+        addCompetenceSccccBtn.addEventListener('click', () => addCompetenceSccccRow());
+        // Affichage dynamique du champ SCCCC selon le domaine (cycle 2 ou 3)
+        function updateSccccVisibility() {
+          const domaine = domaineSelect.value;
+          const domainesCycle2et3 = [
+            "Les langages pour penser et communiquer",
+            "Les méthodes et outils pour apprendre",
+            "La formation de la personne et du citoyen",
+            "Les systèmes naturels et techniques",
+            "Les représentations du monde et l'activité humaine"
+          ];
+          if (domainesCycle2et3.includes(domaine)) {
+            document.getElementById('competences_scccc_container').style.display = 'block';
+          } else {
+            document.getElementById('competences_scccc_container').style.display = 'none';
+            competencesSccccList.innerHTML = '';
+          }
+        }
+        domaineSelect.addEventListener('change', updateSccccVisibility);
+        updateSccccVisibility();
+      </script>
+      <label class="block mb-2 font-semibold text-gray-700">AFC <span class="text-xs text-gray-500">(optionnel)</span> :</label>
+      <div id="afc_list"></div>
+      <button type="button" id="add_afc_btn" class="mb-4 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">➕ Ajouter un attendu</button>
+      <script>
+        const afcParDomaine = {
+          "Mobiliser le langage dans toutes ses dimensions": [
+            "Communiquer avec les autres à travers des actions ou des propos.",
+            "Comprendre des textes lus par l’adulte.",
+            "S’exprimer dans un langage oral syntaxiquement correct et précis.",
+            "Commencer à écrire seul."
+          ],
+          "Agir, s'exprimer, comprendre à travers l'activité physique": [
+            "Adapter ses déplacements à des environnements variés.",
+            "Coopérer et s’opposer individuellement ou collectivement."
+          ],
+          "Agir, s'exprimer, comprendre à travers les activités artistiques": [
+            "Réaliser une composition plastique.",
+            "Pratiquer des activités artistiques variées."
+          ],
+          "Construire les premiers outils pour structurer sa pensée": [
+            "Dénombrer, comparer, résoudre des problèmes.",
+            "Se repérer dans le temps et l’espace."
+          ],
+          "Explorer le monde": [
+            "Observer, questionner le monde du vivant, de la matière, des objets.",
+            "Utiliser des outils numériques."
+          ],
+          // Cycle 2
+          "Les langages pour penser et communiquer": [
+            "Lire avec aisance (à haute voix, silencieusement).",
+            "Écrire de manière autonome.",
+            "Comprendre des textes variés."
+          ],
+          "Les méthodes et outils pour apprendre": [
+            "Organiser son travail et ses apprentissages.",
+            "Utiliser des outils numériques pour apprendre."
+          ],
+          "La formation de la personne et du citoyen": [
+            "Respecter les règles de vie collective.",
+            "Développer l’esprit critique et le jugement."
+          ],
+          "Les systèmes naturels et techniques": [
+            "Résoudre des problèmes impliquant des grandeurs et des mesures.",
+            "Utiliser les nombres entiers pour dénombrer, ordonner, repérer, comparer."
+          ],
+          "Les représentations du monde et l'activité humaine": [
+            "Identifier des caractéristiques du vivant, de la matière, des objets.",
+            "Se repérer dans l’espace et le temps."
+          ],
+          "Langues vivantes étrangères et régionales": [
+            "Comprendre des messages oraux simples.",
+            "S’exprimer oralement en continu."
+          ],
+          // Cycle 3
+          "Les langages pour penser et communiquer (C3)": [
+            "Lire, comprendre et interpréter un texte littéraire adapté à son âge.",
+            "Rédiger des écrits variés."
+          ],
+          "Mathématiques (C3)": [
+            "Résoudre des problèmes impliquant des fractions, des nombres décimaux.",
+            "Utiliser les outils numériques pour représenter des données."
+          ],
+          "Sciences et technologie (C3)": [
+            "Pratiquer des démarches scientifiques et technologiques."
+          ],
+          "Histoire-Géographie-EMC (C3)": [
+            "Se repérer dans le temps et l’espace.",
+            "Comprendre l’organisation du monde."
+          ],
+          "Langue vivante (C3)": [
+            "Comprendre des textes oraux et écrits.",
+            "S’exprimer à l’oral."
+          ],
+          "Éducation artistique et physique (C3)": [
+            "Réaliser des productions artistiques.",
+            "Réaliser une prestation corporelle ou sportive."
+          ],
+          // Transversal
+          "Transversal": [
+            "Respecter les règles de vie collective.",
+            "Coopérer et mutualiser.",
+            "S’engager dans un projet collectif.",
+            "Utiliser des outils numériques de manière responsable."
+          ]
+        };
+        const afcList = document.getElementById('afc_list');
+        const addAfcBtn = document.getElementById('add_afc_btn');
+        function renderAfcSelect(selectedValue = '') {
+          const domaine = domaineSelect.value;
+          let afcs = afcParDomaine[domaine] || [];
+          if (afcs.length === 0 && domaine.includes('cycle 2')) afcs = afcParDomaine["Les langages pour penser et communiquer"];
+          if (afcs.length === 0 && domaine.includes('cycle 3')) afcs = afcParDomaine["Les langages pour penser et communiquer (C3)"];
+          if (afcs.length === 0 && domaine.includes('Transversal')) afcs = afcParDomaine["Transversal"];
+          afcs = afcs.map(afc => afc.replace(/\.$/, ''));
+          const select = document.createElement('select');
+          select.name = 'afc[]';
+          select.className = 'mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2';
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Sélectionnez un attendu de fin de cycle --';
+          select.appendChild(defaultOption);
+          afcs.forEach(afc => {
+            const option = document.createElement('option');
+            option.value = afc;
+            option.textContent = afc;
+            if (afc === selectedValue) option.selected = true;
+            select.appendChild(option);
+          });
+          return select;
+        }
+        function addAfcRow(selectedValue = '') {
+          const row = document.createElement('div');
+          row.className = 'flex items-center mb-2';
+          const select = renderAfcSelect(selectedValue);
+          row.appendChild(select);
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'ml-2 px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200';
+          removeBtn.textContent = '🗑️';
+          removeBtn.onclick = () => row.remove();
+          row.appendChild(removeBtn);
+          afcList.appendChild(row);
+        }
+        addAfcBtn.addEventListener('click', () => addAfcRow());
+        domaineSelect.addEventListener('change', () => {
+          afcList.innerHTML = '';
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+          if (domaineSelect.value) {
+            afcList.innerHTML = '';
+          }
+        });
+      </script>
       <label class="block mb-2 font-semibold text-gray-700">Prérequis <span class="text-red-500">*</span> :
         <textarea name="prerequis" placeholder="Prérequis" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
