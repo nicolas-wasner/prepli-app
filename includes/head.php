@@ -18,4 +18,5 @@ if (!isset($page_title)) {
     }
   </style>
   <title><?= htmlspecialchars($page_title) ?></title>
-</head> 
+</head>
+<script src="/app.js"></script> 

@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </select>
       </label>
       <label class="block mb-2 font-semibold text-gray-700">Niveau :
-        <input type="text" name="niveau" placeholder="Niveau" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="text" name="niveau" placeholder="Cycle (Niveau de classe)" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
       <label class="block mb-2 font-semibold text-gray-700">Durée :
         <input type="text" name="duree" placeholder="Durée" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -317,7 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       ligne1.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
       const champs1 = [
         {name: 'phase', label: 'Phase & durée'},
-        {name: 'deroulement', label: 'Déroulement'},
+        {name: 'deroulement', label: 'Déroulement et modalités de travail'},
         {name: 'consignes', label: 'Consigne'}
       ];
       champs1.forEach(({name, label}) => {

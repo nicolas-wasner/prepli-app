@@ -104,7 +104,7 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Niveau</label>
-          <input type="text" name="niveau" placeholder="Niveau" value="<?= htmlspecialchars($fiche['niveau']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
+          <input type="text" name="niveau" placeholder="Cycle (Niveau de classe)" value="<?= htmlspecialchars($fiche['niveau']) ?>" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
         </div>
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Durée</label>
@@ -262,7 +262,7 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       ligne1.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
       const champs1 = [
         {name: 'phase', label: 'Phase & durée'},
-        {name: 'deroulement', label: 'Déroulement'},
+        {name: 'deroulement', label: 'Déroulement et modalités de travail'},
         {name: 'consignes', label: 'Consigne'}
       ];
       champs1.forEach(({name, label}) => {

@@ -172,7 +172,7 @@ if ($format === 'pdf') {
     $pdf->writeHTML($html, true, false, true, false, '');
 
     // Export
-    $pdf->Output("fiche_{$fiche['id']}.pdf", 'D');
+    $pdf->Output("fiche_{$fiche['seance']}.pdf", 'D');
     exit;
 }
 
