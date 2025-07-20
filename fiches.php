@@ -32,6 +32,12 @@ $fiches = $stmt->fetchAll();
     </div>
   </div>
 
+  <?php if (isset($_GET['success'])): ?>
+    <div class="mb-6 rounded bg-green-50 border border-green-200 text-green-800 px-4 py-3 flex items-center gap-2">
+      ✅ Fiche enregistrée ou modifiée avec succès.
+    </div>
+  <?php endif; ?>
+
   <?php if (empty($fiches)): ?>
     <div class="text-center py-12">
       <div class="text-gray-400 text-6xl mb-4">📄</div>

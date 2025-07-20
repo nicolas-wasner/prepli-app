@@ -36,20 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $stmt = $pdo->prepare("UPDATE fiches SET
     domaine = ?, niveau = ?, duree = ?, sequence = ?, seance = ?,
-    objectifs = ?, competences = ?, competences_scccc = ?, prerequis = ?, afc = ?,
+    objectifs = ?, competences = ?, competences_scccc = ?, prerequis = ?, critere_realisation = ?, critere_reussite = ?, afc = ?,
     evaluation = ?, bilan = ?, prolongement = ?, remediation = ?,
     nom_enseignant = ?, deroulement_json = ?
     WHERE id = ? AND utilisateur_id = ?");
 
   $stmt->execute([
     $_POST['domaine'], $_POST['niveau'], $_POST['duree'], $_POST['sequence'], $_POST['seance'],
-    $_POST['objectifs'], $_POST['competences'], $_POST['competences_scccc'] ?? '', $_POST['prerequis'], $_POST['afc'],
+    $_POST['objectifs'], json_encode($_POST['competences']), $_POST['competences_scccc'] ?? '', $_POST['prerequis'], $_POST['critere_realisation'], $_POST['critere_reussite'], $_POST['afc'],
     $_POST['evaluation'], $_POST['bilan'], $_POST['prolongement'], $_POST['remediation'],
     $_POST['nom_enseignant'], $deroulement_json,
     $id, $_SESSION['utilisateur_id']
   ]);
 
   $success = "✅ Fiche mise à jour avec succès.";
+  header('Location: /fiches.php?success=1');
+  exit;
 }
 
 // Pour affichage
@@ -124,62 +126,9 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
         <textarea name="objectifs" placeholder="Objectifs visés" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['objectifs']) ?></textarea>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Compétence visée</label>
-        <select name="competences" required class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500">
-          <option value="">-- Sélectionnez une compétence visée --</option>
-          <optgroup label="Mobiliser le langage dans toutes ses dimensions">
-            <option value="Oser entrer en communication" <?= $fiche['competences'] === 'Oser entrer en communication' ? 'selected' : '' ?>>Oser entrer en communication</option>
-            <option value="Comprendre et apprendre" <?= $fiche['competences'] === 'Comprendre et apprendre' ? 'selected' : '' ?>>Comprendre et apprendre</option>
-            <option value="Échanger et réfléchir avec les autres" <?= $fiche['competences'] === 'Échanger et réfléchir avec les autres' ? 'selected' : '' ?>>Échanger et réfléchir avec les autres</option>
-            <option value="Se préparer à apprendre à lire" <?= $fiche['competences'] === 'Se préparer à apprendre à lire' ? 'selected' : '' ?>>Se préparer à apprendre à lire</option>
-            <option value="Développer la conscience phonologique" <?= $fiche['competences'] === 'Développer la conscience phonologique' ? 'selected' : '' ?>>Développer la conscience phonologique</option>
-            <option value="Comprendre le principe alphabétique" <?= $fiche['competences'] === 'Comprendre le principe alphabétique' ? 'selected' : '' ?>>Comprendre le principe alphabétique</option>
-            <option value="Produire des discours variés" <?= $fiche['competences'] === 'Produire des discours variés' ? 'selected' : '' ?>>Produire des discours variés</option>
-            <option value="Découvrir les fonctions de l'écrit" <?= $fiche['competences'] === 'Découvrir les fonctions de l\'écrit' ? 'selected' : '' ?>>Découvrir les fonctions de l'écrit</option>
-            <option value="Commencer à produire des écrits" <?= $fiche['competences'] === 'Commencer à produire des écrits' ? 'selected' : '' ?>>Commencer à produire des écrits</option>
-            <option value="Se familiariser avec l'écrit dans toutes ses formes" <?= $fiche['competences'] === 'Se familiariser avec l\'écrit dans toutes ses formes' ? 'selected' : '' ?>>Se familiariser avec l'écrit dans toutes ses formes</option>
-          </optgroup>
-          <optgroup label="Agir, s'exprimer, comprendre à travers l'activité physique">
-            <option value="Agir dans des environnements variés" <?= $fiche['competences'] === 'Agir dans des environnements variés' ? 'selected' : '' ?>>Agir dans des environnements variés</option>
-            <option value="Adapter ses déplacements à des contraintes" <?= $fiche['competences'] === 'Adapter ses déplacements à des contraintes' ? 'selected' : '' ?>>Adapter ses déplacements à des contraintes</option>
-            <option value="Coopérer et s'opposer individuellement ou collectivement" <?= $fiche['competences'] === 'Coopérer et s\'opposer individuellement ou collectivement' ? 'selected' : '' ?>>Coopérer et s'opposer individuellement ou collectivement</option>
-            <option value="Exprimer des intentions par le geste" <?= $fiche['competences'] === 'Exprimer des intentions par le geste' ? 'selected' : '' ?>>Exprimer des intentions par le geste</option>
-            <option value="Apprendre à respecter des règles" <?= $fiche['competences'] === 'Apprendre à respecter des règles' ? 'selected' : '' ?>>Apprendre à respecter des règles</option>
-            <option value="Développer sa motricité fine et globale" <?= $fiche['competences'] === 'Développer sa motricité fine et globale' ? 'selected' : '' ?>>Développer sa motricité fine et globale</option>
-            <option value="Se repérer dans l'espace avec son corps" <?= $fiche['competences'] === 'Se repérer dans l\'espace avec son corps' ? 'selected' : '' ?>>Se repérer dans l'espace avec son corps</option>
-          </optgroup>
-          <optgroup label="Agir, s'exprimer, comprendre à travers les activités artistiques">
-            <option value="Expérimenter les matériaux, les outils, les supports" <?= $fiche['competences'] === 'Expérimenter les matériaux, les outils, les supports' ? 'selected' : '' ?>>Expérimenter les matériaux, les outils, les supports</option>
-            <option value="Créer des productions plastiques et visuelles" <?= $fiche['competences'] === 'Créer des productions plastiques et visuelles' ? 'selected' : '' ?>>Créer des productions plastiques et visuelles</option>
-            <option value="Observer et décrire des œuvres" <?= $fiche['competences'] === 'Observer et décrire des œuvres' ? 'selected' : '' ?>>Observer et décrire des œuvres</option>
-            <option value="Explorer des univers sonores" <?= $fiche['competences'] === 'Explorer des univers sonores' ? 'selected' : '' ?>>Explorer des univers sonores</option>
-            <option value="Participer à des jeux vocaux et corporels" <?= $fiche['competences'] === 'Participer à des jeux vocaux et corporels' ? 'selected' : '' ?>>Participer à des jeux vocaux et corporels</option>
-            <option value="Chanter seul et en groupe" <?= $fiche['competences'] === 'Chanter seul et en groupe' ? 'selected' : '' ?>>Chanter seul et en groupe</option>
-            <option value="Jouer avec sa voix et son corps" <?= $fiche['competences'] === 'Jouer avec sa voix et son corps' ? 'selected' : '' ?>>Jouer avec sa voix et son corps</option>
-            <option value="Imaginer, inventer, interpréter" <?= $fiche['competences'] === 'Imaginer, inventer, interpréter' ? 'selected' : '' ?>>Imaginer, inventer, interpréter</option>
-          </optgroup>
-          <optgroup label="Construire les premiers outils pour structurer sa pensée">
-            <option value="Dénombrer des quantités" <?= $fiche['competences'] === 'Dénombrer des quantités' ? 'selected' : '' ?>>Dénombrer des quantités</option>
-            <option value="Associer un nombre à une quantité" <?= $fiche['competences'] === 'Associer un nombre à une quantité' ? 'selected' : '' ?>>Associer un nombre à une quantité</option>
-            <option value="Utiliser le comptage pour résoudre des problèmes" <?= $fiche['competences'] === 'Utiliser le comptage pour résoudre des problèmes' ? 'selected' : '' ?>>Utiliser le comptage pour résoudre des problèmes</option>
-            <option value="Comprendre les nombres comme positions" <?= $fiche['competences'] === 'Comprendre les nombres comme positions' ? 'selected' : '' ?>>Comprendre les nombres comme positions</option>
-            <option value="Utiliser les premiers symboles mathématiques" <?= $fiche['competences'] === 'Utiliser les premiers symboles mathématiques' ? 'selected' : '' ?>>Utiliser les premiers symboles mathématiques</option>
-            <option value="Reproduire, compléter, créer des suites logiques" <?= $fiche['competences'] === 'Reproduire, compléter, créer des suites logiques' ? 'selected' : '' ?>>Reproduire, compléter, créer des suites logiques</option>
-            <option value="Reconnaître et nommer des formes" <?= $fiche['competences'] === 'Reconnaître et nommer des formes' ? 'selected' : '' ?>>Reconnaître et nommer des formes</option>
-            <option value="Comparer, classer des objets selon des critères" <?= $fiche['competences'] === 'Comparer, classer des objets selon des critères' ? 'selected' : '' ?>>Comparer, classer des objets selon des critères</option>
-            <option value="Se repérer dans le temps court (journée, semaine)" <?= $fiche['competences'] === 'Se repérer dans le temps court (journée, semaine)' ? 'selected' : '' ?>>Se repérer dans le temps court (journée, semaine)</option>
-          </optgroup>
-          <optgroup label="Explorer le monde">
-            <option value="Découvrir les objets, matières, phénomènes du vivant" <?= $fiche['competences'] === 'Découvrir les objets, matières, phénomènes du vivant' ? 'selected' : '' ?>>Découvrir les objets, matières, phénomènes du vivant</option>
-            <option value="Utiliser ses sens pour observer" <?= $fiche['competences'] === 'Utiliser ses sens pour observer' ? 'selected' : '' ?>>Utiliser ses sens pour observer</option>
-            <option value="Identifier les caractéristiques du vivant et des objets" <?= $fiche['competences'] === 'Identifier les caractéristiques du vivant et des objets' ? 'selected' : '' ?>>Identifier les caractéristiques du vivant et des objets</option>
-            <option value="Se repérer dans le temps (jours, mois, saisons)" <?= $fiche['competences'] === 'Se repérer dans le temps (jours, mois, saisons)' ? 'selected' : '' ?>>Se repérer dans le temps (jours, mois, saisons)</option>
-            <option value="Se repérer dans l'espace (école, classe, parcours)" <?= $fiche['competences'] === 'Se repérer dans l\'espace (école, classe, parcours)' ? 'selected' : '' ?>>Se repérer dans l'espace (école, classe, parcours)</option>
-            <option value="Découvrir l'usage d'objets techniques simples" <?= $fiche['competences'] === 'Découvrir l\'usage d\'objets techniques simples' ? 'selected' : '' ?>>Découvrir l'usage d'objets techniques simples</option>
-            <option value="Manipuler des outils numériques" <?= $fiche['competences'] === 'Manipuler des outils numériques' ? 'selected' : '' ?>>Manipuler des outils numériques</option>
-            <option value="Observer les effets de ses actions sur l'environnement" <?= $fiche['competences'] === 'Observer les effets de ses actions sur l\'environnement' ? 'selected' : '' ?>>Observer les effets de ses actions sur l'environnement</option>
-          </optgroup>
-        </select>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Compétence(s) visée(s)</label>
+        <div id="competences_list"></div>
+        <button type="button" id="add_competence_btn" class="mb-4 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">➕ Ajouter une compétence</button>
       </div>
       <div id="competences_scccc_container" style="display: none;">
         <label class="block text-sm font-medium text-gray-700 mb-1">Compétence du SCCCC</label>
@@ -209,6 +158,14 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Prérequis</label>
           <textarea name="prerequis" placeholder="Prérequis" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['prerequis']) ?></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Critère de réalisation</label>
+          <textarea name="critere_realisation" placeholder="Comment je fais pour réussir" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['critere_realisation'] ?? '') ?></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Critère de réussite</label>
+          <textarea name="critere_reussite" placeholder="Comment je sais que j'ai réussi" class="w-full border border-gray-300 rounded-md px-3 py-2 bg-gray-50 focus:ring-2 focus:ring-blue-500"><?= htmlspecialchars($fiche['critere_reussite'] ?? '') ?></textarea>
         </div>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -374,7 +331,7 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       const rows = document.querySelectorAll('#deroulement-table tbody tr');
       const data = [];
       rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
+        const inputs = row.querySelectorAll('textarea');
         const item = {};
         inputs.forEach(input => {
           item[input.name.replace('[]', '')] = input.value;
@@ -382,6 +339,112 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
         data.push(item);
       });
       document.getElementById('deroulement_json').value = JSON.stringify(data);
+      console.log('deroulement_json envoyé :', document.getElementById('deroulement_json').value);
+    });
+
+    const competencesParDomaine = {
+      "Mobiliser le langage dans toutes ses dimensions": [
+        "Oser entrer en communication",
+        "Comprendre et apprendre",
+        "Échanger et réfléchir avec les autres",
+        "Se préparer à apprendre à lire",
+        "Développer la conscience phonologique",
+        "Comprendre le principe alphabétique",
+        "Produire des discours variés",
+        "Découvrir les fonctions de l'écrit",
+        "Commencer à produire des écrits",
+        "Se familiariser avec l'écrit dans toutes ses formes"
+      ],
+      "Agir, s'exprimer, comprendre à travers l'activité physique": [
+        "Agir dans des environnements variés",
+        "Adapter ses déplacements à des contraintes",
+        "Coopérer et s'opposer individuellement ou collectivement",
+        "Exprimer des intentions par le geste",
+        "Apprendre à respecter des règles",
+        "Développer sa motricité fine et globale",
+        "Se repérer dans l'espace avec son corps"
+      ],
+      "Agir, s'exprimer, comprendre à travers les activités artistiques": [
+        "Expérimenter les matériaux, les outils, les supports",
+        "Créer des productions plastiques et visuelles",
+        "Observer et décrire des œuvres",
+        "Explorer des univers sonores",
+        "Participer à des jeux vocaux et corporels",
+        "Chanter seul et en groupe",
+        "Jouer avec sa voix et son corps",
+        "Imaginer, inventer, interpréter"
+      ],
+      "Construire les premiers outils pour structurer sa pensée": [
+        "Dénombrer des quantités",
+        "Associer un nombre à une quantité",
+        "Utiliser le comptage pour résoudre des problèmes",
+        "Comprendre les nombres comme positions",
+        "Utiliser les premiers symboles mathématiques",
+        "Reproduire, compléter, créer des suites logiques",
+        "Reconnaître et nommer des formes",
+        "Comparer, classer des objets selon des critères",
+        "Se repérer dans le temps court (journée, semaine)"
+      ],
+      "Explorer le monde": [
+        "Découvrir les objets, matières, phénomènes du vivant",
+        "Utiliser ses sens pour observer",
+        "Identifier les caractéristiques du vivant et des objets",
+        "Se repérer dans le temps (jours, mois, saisons)",
+        "Se repérer dans l'espace (école, classe, parcours)",
+        "Découvrir l'usage d'objets techniques simples",
+        "Manipuler des outils numériques",
+        "Observer les effets de ses actions sur l'environnement"
+      ],
+      // Ajoutez les autres domaines si besoin
+    };
+    const domaineSelect = document.querySelector('select[name="domaine"]');
+    const competencesList = document.getElementById('competences_list');
+    const addCompetenceBtn = document.getElementById('add_competence_btn');
+    function renderCompetenceSelect(selectedValue = '') {
+      const domaine = domaineSelect.value;
+      const competences = competencesParDomaine[domaine] || [];
+      const select = document.createElement('select');
+      select.name = 'competences[]';
+      select.required = true;
+      select.className = 'mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2';
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '-- Sélectionnez une compétence --';
+      select.appendChild(defaultOption);
+      competences.forEach(comp => {
+        const option = document.createElement('option');
+        option.value = comp;
+        option.textContent = comp;
+        if (comp === selectedValue) option.selected = true;
+        select.appendChild(option);
+      });
+      return select;
+    }
+    function addCompetenceRow(selectedValue = '') {
+      const row = document.createElement('div');
+      row.className = 'flex items-center mb-2';
+      const select = renderCompetenceSelect(selectedValue);
+      row.appendChild(select);
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'ml-2 px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200';
+      removeBtn.textContent = '🗑️';
+      removeBtn.onclick = () => row.remove();
+      row.appendChild(removeBtn);
+      competencesList.appendChild(row);
+    }
+    addCompetenceBtn.addEventListener('click', () => addCompetenceRow());
+    domaineSelect.addEventListener('change', () => {
+      // Réinitialiser la liste des compétences si le domaine change
+      competencesList.innerHTML = '';
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      // Pré-remplir les compétences existantes si on modifie une fiche
+      const initialCompetences = <?php echo json_encode(json_decode($fiche['competences'] ?? '[]', true) ?: []); ?>;
+      if (domaineSelect.value && initialCompetences.length) {
+        competencesList.innerHTML = '';
+        initialCompetences.forEach(val => addCompetenceRow(val));
+      }
     });
   </script>
 </body>

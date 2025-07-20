@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_POST['sequence'],
     $_POST['seance'],
     $_POST['objectifs'],
-    $_POST['competences'],
+    json_encode($_POST['competences']), // ici
     $_POST['competences_scccc'] ?? '',
     $_POST['afc'],
     $_POST['prerequis'],
@@ -37,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['utilisateur_id']
   ]);
 
-  $success = "✅ Fiche enregistrée avec succès.";
+  header('Location: /fiches.php?success=1');
+  exit;
 }
 ?>
 
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <form action="" method="post" class="space-y-6 max-w-2xl bg-white rounded-xl shadow p-8 mt-8">
       <label class="block mb-2 font-semibold text-gray-700">Domaine :
-        <select name="domaine" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select name="domaine" id="domaine_select" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
           <option value="">-- Sélectionnez un domaine d'apprentissage --</option>
           <optgroup label="École maternelle (cycle 1)">
             <option value="Mobiliser le langage dans toutes ses dimensions">Mobiliser le langage dans toutes ses dimensions</option>
@@ -90,63 +91,112 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label class="block mb-2 font-semibold text-gray-700">Objectifs visés :
         <textarea name="objectifs" placeholder="Objectifs visés" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Compétence visée :
-        <select name="competences" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="">-- Sélectionnez une compétence visée --</option>
-          <optgroup label="Mobiliser le langage dans toutes ses dimensions">
-            <option value="Oser entrer en communication">Oser entrer en communication</option>
-            <option value="Comprendre et apprendre">Comprendre et apprendre</option>
-            <option value="Échanger et réfléchir avec les autres">Échanger et réfléchir avec les autres</option>
-            <option value="Se préparer à apprendre à lire">Se préparer à apprendre à lire</option>
-            <option value="Développer la conscience phonologique">Développer la conscience phonologique</option>
-            <option value="Comprendre le principe alphabétique">Comprendre le principe alphabétique</option>
-            <option value="Produire des discours variés">Produire des discours variés</option>
-            <option value="Découvrir les fonctions de l'écrit">Découvrir les fonctions de l'écrit</option>
-            <option value="Commencer à produire des écrits">Commencer à produire des écrits</option>
-            <option value="Se familiariser avec l'écrit dans toutes ses formes">Se familiariser avec l'écrit dans toutes ses formes</option>
-          </optgroup>
-          <optgroup label="Agir, s'exprimer, comprendre à travers l'activité physique">
-            <option value="Agir dans des environnements variés">Agir dans des environnements variés</option>
-            <option value="Adapter ses déplacements à des contraintes">Adapter ses déplacements à des contraintes</option>
-            <option value="Coopérer et s'opposer individuellement ou collectivement">Coopérer et s'opposer individuellement ou collectivement</option>
-            <option value="Exprimer des intentions par le geste">Exprimer des intentions par le geste</option>
-            <option value="Apprendre à respecter des règles">Apprendre à respecter des règles</option>
-            <option value="Développer sa motricité fine et globale">Développer sa motricité fine et globale</option>
-            <option value="Se repérer dans l'espace avec son corps">Se repérer dans l'espace avec son corps</option>
-          </optgroup>
-          <optgroup label="Agir, s'exprimer, comprendre à travers les activités artistiques">
-            <option value="Expérimenter les matériaux, les outils, les supports">Expérimenter les matériaux, les outils, les supports</option>
-            <option value="Créer des productions plastiques et visuelles">Créer des productions plastiques et visuelles</option>
-            <option value="Observer et décrire des œuvres">Observer et décrire des œuvres</option>
-            <option value="Explorer des univers sonores">Explorer des univers sonores</option>
-            <option value="Participer à des jeux vocaux et corporels">Participer à des jeux vocaux et corporels</option>
-            <option value="Chanter seul et en groupe">Chanter seul et en groupe</option>
-            <option value="Jouer avec sa voix et son corps">Jouer avec sa voix et son corps</option>
-            <option value="Imaginer, inventer, interpréter">Imaginer, inventer, interpréter</option>
-          </optgroup>
-          <optgroup label="Construire les premiers outils pour structurer sa pensée">
-            <option value="Dénombrer des quantités">Dénombrer des quantités</option>
-            <option value="Associer un nombre à une quantité">Associer un nombre à une quantité</option>
-            <option value="Utiliser le comptage pour résoudre des problèmes">Utiliser le comptage pour résoudre des problèmes</option>
-            <option value="Comprendre les nombres comme positions">Comprendre les nombres comme positions</option>
-            <option value="Utiliser les premiers symboles mathématiques">Utiliser les premiers symboles mathématiques</option>
-            <option value="Reproduire, compléter, créer des suites logiques">Reproduire, compléter, créer des suites logiques</option>
-            <option value="Reconnaître et nommer des formes">Reconnaître et nommer des formes</option>
-            <option value="Comparer, classer des objets selon des critères">Comparer, classer des objets selon des critères</option>
-            <option value="Se repérer dans le temps court (journée, semaine)">Se repérer dans le temps court (journée, semaine)</option>
-          </optgroup>
-          <optgroup label="Explorer le monde">
-            <option value="Découvrir les objets, matières, phénomènes du vivant">Découvrir les objets, matières, phénomènes du vivant</option>
-            <option value="Utiliser ses sens pour observer">Utiliser ses sens pour observer</option>
-            <option value="Identifier les caractéristiques du vivant et des objets">Identifier les caractéristiques du vivant et des objets</option>
-            <option value="Se repérer dans le temps (jours, mois, saisons)">Se repérer dans le temps (jours, mois, saisons)</option>
-            <option value="Se repérer dans l'espace (école, classe, parcours)">Se repérer dans l'espace (école, classe, parcours)</option>
-            <option value="Découvrir l'usage d'objets techniques simples">Découvrir l'usage d'objets techniques simples</option>
-            <option value="Manipuler des outils numériques">Manipuler des outils numériques</option>
-            <option value="Observer les effets de ses actions sur l'environnement">Observer les effets de ses actions sur l'environnement</option>
-          </optgroup>
-        </select>
-      </label>
+      <label class="block mb-2 font-semibold text-gray-700">Compétence(s) visée(s) :</label>
+      <div id="competences_list"></div>
+      <button type="button" id="add_competence_btn" class="mb-4 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">➕ Ajouter une compétence</button>
+      <script>
+        const competencesParDomaine = {
+          "Mobiliser le langage dans toutes ses dimensions": [
+            "Oser entrer en communication",
+            "Comprendre et apprendre",
+            "Échanger et réfléchir avec les autres",
+            "Se préparer à apprendre à lire",
+            "Développer la conscience phonologique",
+            "Comprendre le principe alphabétique",
+            "Produire des discours variés",
+            "Découvrir les fonctions de l'écrit",
+            "Commencer à produire des écrits",
+            "Se familiariser avec l'écrit dans toutes ses formes"
+          ],
+          "Agir, s'exprimer, comprendre à travers l'activité physique": [
+            "Agir dans des environnements variés",
+            "Adapter ses déplacements à des contraintes",
+            "Coopérer et s'opposer individuellement ou collectivement",
+            "Exprimer des intentions par le geste",
+            "Apprendre à respecter des règles",
+            "Développer sa motricité fine et globale",
+            "Se repérer dans l'espace avec son corps"
+          ],
+          "Agir, s'exprimer, comprendre à travers les activités artistiques": [
+            "Expérimenter les matériaux, les outils, les supports",
+            "Créer des productions plastiques et visuelles",
+            "Observer et décrire des œuvres",
+            "Explorer des univers sonores",
+            "Participer à des jeux vocaux et corporels",
+            "Chanter seul et en groupe",
+            "Jouer avec sa voix et son corps",
+            "Imaginer, inventer, interpréter"
+          ],
+          "Construire les premiers outils pour structurer sa pensée": [
+            "Dénombrer des quantités",
+            "Associer un nombre à une quantité",
+            "Utiliser le comptage pour résoudre des problèmes",
+            "Comprendre les nombres comme positions",
+            "Utiliser les premiers symboles mathématiques",
+            "Reproduire, compléter, créer des suites logiques",
+            "Reconnaître et nommer des formes",
+            "Comparer, classer des objets selon des critères",
+            "Se repérer dans le temps court (journée, semaine)"
+          ],
+          "Explorer le monde": [
+            "Découvrir les objets, matières, phénomènes du vivant",
+            "Utiliser ses sens pour observer",
+            "Identifier les caractéristiques du vivant et des objets",
+            "Se repérer dans le temps (jours, mois, saisons)",
+            "Se repérer dans l'espace (école, classe, parcours)",
+            "Découvrir l'usage d'objets techniques simples",
+            "Manipuler des outils numériques",
+            "Observer les effets de ses actions sur l'environnement"
+          ],
+          // Ajoutez les autres domaines si besoin
+        };
+        const domaineSelect = document.getElementById('domaine_select');
+        const competencesList = document.getElementById('competences_list');
+        const addCompetenceBtn = document.getElementById('add_competence_btn');
+        function renderCompetenceSelect(selectedValue = '') {
+          const domaine = domaineSelect.value;
+          const competences = competencesParDomaine[domaine] || [];
+          const select = document.createElement('select');
+          select.name = 'competences[]';
+          select.required = true;
+          select.className = 'mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2';
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Sélectionnez une compétence --';
+          select.appendChild(defaultOption);
+          competences.forEach(comp => {
+            const option = document.createElement('option');
+            option.value = comp;
+            option.textContent = comp;
+            if (comp === selectedValue) option.selected = true;
+            select.appendChild(option);
+          });
+          return select;
+        }
+        function addCompetenceRow(selectedValue = '') {
+          const row = document.createElement('div');
+          row.className = 'flex items-center mb-2';
+          const select = renderCompetenceSelect(selectedValue);
+          row.appendChild(select);
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.className = 'ml-2 px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200';
+          removeBtn.textContent = '🗑️';
+          removeBtn.onclick = () => row.remove();
+          row.appendChild(removeBtn);
+          competencesList.appendChild(row);
+        }
+        addCompetenceBtn.addEventListener('click', () => addCompetenceRow());
+        domaineSelect.addEventListener('change', () => {
+          // Réinitialiser la liste des compétences si le domaine change
+          competencesList.innerHTML = '';
+        });
+        document.addEventListener('DOMContentLoaded', () => {
+          if (domaineSelect.value) {
+            competencesList.innerHTML = '';
+          }
+        });
+      </script>
       <div id="competences_scccc_container" style="display: none;">
         <label class="block mb-2 font-semibold text-gray-700">Compétence du SCCCC :
           <select name="competences_scccc" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -168,25 +218,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </select>
         </label>
       </div>
-      <label class="block mb-2 font-semibold text-gray-700">AFC :
+      <label class="block mb-2 font-semibold text-gray-700">AFC <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="afc" placeholder="AFC" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Prérequis :
+      <label class="block mb-2 font-semibold text-gray-700">Prérequis <span class="text-red-500">❌</span> :
         <textarea name="prerequis" placeholder="Prérequis" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Modalités d'évaluation :
+      <label class="block mb-2 font-semibold text-gray-700">Critère de réalisation :
+        <textarea name="critere_realisation" placeholder="Comment je fais pour réussir" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </label>
+      <label class="block mb-2 font-semibold text-gray-700">Critère de réussite :
+        <textarea name="critere_reussite" placeholder="Comment je sais que j'ai réussi" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </label>
+      <label class="block mb-2 font-semibold text-gray-700">Modalités d'évaluation <span class="text-red-500">❌</span> :
         <textarea name="evaluation" placeholder="Modalités d'évaluation" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Bilan pédagogique et didactique :
+      <label class="block mb-2 font-semibold text-gray-700">Bilan pédagogique et didactique <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="bilan" placeholder="Bilan pédagogique et didactique" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Prolongement(s) possible(s) :
+      <label class="block mb-2 font-semibold text-gray-700">Prolongement(s) possible(s) <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="prolongement" placeholder="Prolongement(s) possible(s)" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Remédiation(s) éventuelle(s) :
+      <label class="block mb-2 font-semibold text-gray-700">Remédiation(s) éventuelle(s) <span class="text-xs text-gray-500">(optionnel)</span> :
         <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Nom de l'enseignant :
+      <label class="block mb-2 font-semibold text-gray-700">Nom de l'enseignant <span class="text-red-500">❌</span> :
         <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
 
@@ -325,9 +381,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     document.querySelector('form').addEventListener('submit', function (e) {
       const rows = document.querySelectorAll('#deroulement-table tbody tr');
+      if (rows.length === 0) {
+        alert('Veuillez ajouter au moins une ligne de déroulement de séance.');
+        e.preventDefault();
+        return false;
+      }
+      let allFilled = true;
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('textarea');
+        inputs.forEach(input => {
+          if (!input.value.trim()) {
+            allFilled = false;
+          }
+        });
+      });
+      if (!allFilled) {
+        alert('Veuillez remplir tous les champs du déroulement de séance.');
+        e.preventDefault();
+        return false;
+      }
       const data = [];
       rows.forEach(row => {
-        const inputs = row.querySelectorAll('textarea'); // Correction ici
+        const inputs = row.querySelectorAll('textarea');
         const item = {};
         inputs.forEach(input => {
           item[input.name.replace('[]', '')] = input.value;
@@ -335,6 +410,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         data.push(item);
       });
       document.getElementById('deroulement_json').value = JSON.stringify(data);
+      console.log('deroulement_json envoyé :', document.getElementById('deroulement_json').value);
     });
   </script>
 </body>

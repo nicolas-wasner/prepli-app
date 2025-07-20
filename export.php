@@ -29,6 +29,10 @@ function champ($f, $cle) {
 }
 $deroulements = json_decode($fiche['deroulement_json'] ?? '[]', true);
 
+// Pour l'affichage des compétences :
+$competences = json_decode($fiche['competences'] ?? '[]', true);
+$competences_affichage = is_array($competences) ? implode(', ', $competences) : htmlspecialchars($fiche['competences']);
+
 // PDF
 if ($format === 'pdf') {
     require_once __DIR__ . '/includes/tcpdf/tcpdf.php';
@@ -100,12 +104,20 @@ if ($format === 'pdf') {
 
     // Tableau 2x2
     $html .= '<table border="1" cellpadding="4">
-                 <tr><td><strong>Compétences visé(s) :</strong><br>' . nl2br(htmlspecialchars($fiche['competences'])) . '</td>
+                 <tr><td><strong>Compétences visé(s) :</strong><br>' . nl2br(htmlspecialchars($competences_affichage)) . '</td>
                  <td><strong>Compétences du SCCCC :</strong><br>' . nl2br(htmlspecialchars($fiche['competences_scccc'] ?? '')) . '</td></tr>
                 </table><br>';
 
     // Prérequis
     $html .= '<table border="1" cellpadding="4"><tr><td><strong>Prérequis :</strong><br>' . nl2br(htmlspecialchars($fiche['prerequis'])) . '</td></tr></table><br>';
+
+     // Tableau 2x2
+     $html .= '<table border="1" cellpadding="4">
+     <tr><td><strong>Critère de réalisation :</strong><br>' . nl2br(htmlspecialchars($fiche['critere_realisation'] ?? '')) . '</td>
+     <td><strong>Critère de réussite :</strong><br>' . nl2br(htmlspecialchars($fiche['critere_reussite'] ?? '')) . '</td></tr>
+    </table><br>';
+    //$html .= '<table border="1" cellpadding="4"><tr><td><strong>Critère de réalisation :</strong><br>' . nl2br(htmlspecialchars($fiche['critere_realisation'] ?? '')) . '</td></tr></table><br>';
+    //$html .= '<table border="1" cellpadding="4"><tr><td><strong>Critère de réussite :</strong><br>' . nl2br(htmlspecialchars($fiche['critere_reussite'] ?? '')) . '</td></tr></table><br>';
 
     // Objectifs
     $html .= '<table border="1" cellpadding="4"><tr><td><strong>Objectif(s) visé(s) :</strong><br>' . nl2br(htmlspecialchars($fiche['objectifs'])) . '</td></tr></table><br>';
