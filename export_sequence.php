@@ -6,8 +6,9 @@ if (!isset($_SESSION['utilisateur_id'])) {
   header('Location: /login');
   exit;
 }
-ini_set('display_errors', 0);
-error_reporting(E_ALL & ~E_DEPRECATED);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 $id = (int) ($_GET['id'] ?? 0);
 $stmt = $pdo->prepare("SELECT * FROM sequences WHERE id = ? AND utilisateur_id = ?");
@@ -23,7 +24,7 @@ $stmt = $pdo->prepare("
   FROM fiches f
   INNER JOIN sequences_fiches sf ON sf.id_fiche = f.id
   WHERE sf.id_sequence = ?
-  ORDER BY f.id ASC
+  ORDER BY sf.id ASC
 ");
 $stmt->execute([$id]);
 $fiches = $stmt->fetchAll();
@@ -62,8 +63,15 @@ $pdf->SetFont('helvetica', '', 10);
 
 // Afficher le titre et la description de la séquence en haut de la première page
 $html_intro = '<h2 style="text-align:center;">Séquence : ' . htmlspecialchars($sequence['titre']) . '</h2>';
-$html_intro .= '<p><strong>Description :</strong><br>' . nl2br(htmlspecialchars($sequence['description'])) . '</p>';
-$html_intro .= '<hr>';
+// Ajout des champs séquence
+$html_intro .= '<table border="1" cellpadding="4" style="margin-top:10px;">';
+$html_intro .= '<tr><td><strong>Objectifs visé(s) :</strong><br>' . nl2br(htmlspecialchars($sequence['objectifs'] ?? '')) . '</td></tr>';
+$html_intro .= '<tr><td><strong>Compétence(s) visée(s) :</strong><br>' . nl2br(htmlspecialchars($sequence['competences'] ?? '')) . '</td></tr>';
+$html_intro .= '<tr><td><strong>Matériel :</strong><br>' . nl2br(htmlspecialchars($sequence['materiel'] ?? '')) . '</td></tr>';
+$html_intro .= '<tr><td><strong>Modalité(s) d\'évaluation :</strong><br>' . nl2br(htmlspecialchars($sequence['evaluation'] ?? '')) . '</td></tr>';
+$html_intro .= '<tr><td><strong>Bilan pédagogique et didactique :</strong><br>' . nl2br(htmlspecialchars($sequence['bilan'] ?? '')) . '</td></tr>';
+$html_intro .= '<tr><td><strong>Prolongement(s) possible(s) :</strong><br>' . nl2br(htmlspecialchars($sequence['prolongement'] ?? '')) . '</td></tr>';
+$html_intro .= '</table><hr>';
 $pdf->writeHTML($html_intro, true, false, true, false, '');
 
 foreach ($fiches as $fiche) {
@@ -150,5 +158,5 @@ foreach ($fiches as $fiche) {
     $pdf->writeHTML($html, true, false, true, false, '');
 }
 
-$pdf->Output("sequence_{$sequence['id']}.pdf", 'D');
+$pdf->Output("sequence_{$sequence['titre']}.pdf", 'D');
 exit;

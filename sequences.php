@@ -27,6 +27,11 @@ $sequences = $stmt->fetchAll();
   <?php include __DIR__ . '/includes/header.php'; ?>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-20">
+    <?php if (isset($_GET['success'])): ?>
+      <div class="mb-6 rounded bg-green-50 border border-green-200 text-green-800 px-4 py-3 flex items-center gap-2">
+        ✅ Séquence enregistrée ou modifiée avec succès.
+      </div>
+    <?php endif; ?>
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
       <div class="w-full">
         <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-8 text-center">🧩 Mes séquences</h1>
