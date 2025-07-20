@@ -22,7 +22,18 @@ $stmt = $pdo->prepare("SELECT * FROM fiches WHERE id = ? AND utilisateur_id = ?"
 $stmt->execute([$id, $_SESSION['utilisateur_id']]);
 $fiche = $stmt->fetch();
 
-if (!$fiche) exit("Fiche introuvable");
+if (!$fiche) {
+  echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Erreur export</title><link rel="stylesheet" href="/public-tailwind.css"></head><body class="font-sans bg-gray-50 min-h-screen flex items-center justify-center"><div class="max-w-lg w-full bg-white rounded-xl shadow-lg p-8 text-center"><h1 class="text-2xl font-bold text-red-600 mb-4">❌ Fiche introuvable</h1><p class="mb-6">La fiche demandée n\'existe pas ou vous n\'y avez pas accès.</p><a href="/fiches" class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Retour à la liste des fiches</a></div></body></html>';
+  exit;
+}
+// Vérification des champs obligatoires
+$champs_obligatoires = ['domaine','niveau','duree','sequence','seance','objectifs','competences','prerequis','critere_realisation','critere_reussite','evaluation','nom_enseignant','deroulement_json'];
+foreach ($champs_obligatoires as $champ) {
+  if (empty($fiche[$champ]) || (is_string($fiche[$champ]) && trim($fiche[$champ]) === '')) {
+    echo '<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><title>Erreur export</title><link rel="stylesheet" href="/public-tailwind.css"></head><body class="font-sans bg-gray-50 min-h-screen flex items-center justify-center"><div class="max-w-lg w-full bg-white rounded-xl shadow-lg p-8 text-center"><h1 class="text-2xl font-bold text-red-600 mb-4">❌ Export impossible</h1><p class="mb-6">Certains champs obligatoires sont manquants ou incomplets dans cette fiche.<br><span class="text-sm text-gray-600">Champ manquant : <b>' . htmlspecialchars($champ) . '</b></span></p><a href="/modifier/' . (int)$fiche['id'] . '" class="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Retour à la modification</a></div></body></html>';
+    exit;
+  }
+}
 
 function champ($f, $cle) {
   return nl2br(htmlspecialchars((string) ($f[$cle] ?? '')));

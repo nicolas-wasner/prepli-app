@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="text" name="sequence" placeholder="Séquence" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
       <label class="block mb-2 font-semibold text-gray-700">Séance :
-        <input type="text" name="seance" placeholder="Séance" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <input type="text" name="seance" placeholder="Séance n° : Titre de la séance" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
       <label class="block mb-2 font-semibold text-gray-700">Objectifs visés :
         <textarea name="objectifs" placeholder="Objectifs visés" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
@@ -247,12 +247,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
 
       <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>
-      <div class="overflow-x-auto">
-        <table id="deroulement-table" class="min-w-full w-full border border-gray-200 rounded-lg text-sm bg-gray-50">
-          <tbody></tbody>
-        </table>
+      <div id="deroulement-list" class="space-y-4 mb-4"></div>
+      <div class="flex justify-center mb-8">
+        <button type="button" onclick="addDeroulementRow()" class="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition">➕ Ajouter une ligne</button>
       </div>
-      <button type="button" onclick="addDeroulementRow()">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
 
       <button type="submit">💾 Enregistrer</button>
@@ -311,14 +309,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     });
 
     function addDeroulementRow(data = {}) {
-      const table = document.querySelector('#deroulement-table tbody');
-      const row = document.createElement('tr');
-      // On va utiliser une seule cellule qui contient toute la structure UX
-      const cell = document.createElement('td');
-      cell.colSpan = 8;
-      // Bloc principal
+      const list = document.getElementById('deroulement-list');
       const bloc = document.createElement('div');
-      bloc.className = 'space-y-2 border rounded-lg p-3 bg-white mb-2 shadow';
+      bloc.className = 'bg-white rounded-lg shadow p-4 mb-2';
       // Ligne 1 : 3 champs côte à côte
       const ligne1 = document.createElement('div');
       ligne1.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
@@ -368,27 +361,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       btnGroup.className = 'flex items-end justify-end mt-2';
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center justify-center ml-2';
+      btn.className = 'w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded flex items-center justify-center ml-2';
       btn.innerText = '🗑️';
-      btn.onclick = function() { bloc.closest('tr').remove(); };
+      btn.onclick = function() { bloc.remove(); };
       btnGroup.appendChild(btn);
       ligne2.appendChild(btnGroup);
       bloc.appendChild(ligne2);
-      cell.appendChild(bloc);
-      row.appendChild(cell);
-      table.appendChild(row);
+      list.appendChild(bloc);
     }
 
     document.querySelector('form').addEventListener('submit', function (e) {
-      const rows = document.querySelectorAll('#deroulement-table tbody tr');
-      if (rows.length === 0) {
+      const blocs = document.querySelectorAll('#deroulement-list > div');
+      if (blocs.length === 0) {
         alert('Veuillez ajouter au moins une ligne de déroulement de séance.');
         e.preventDefault();
         return false;
       }
       let allFilled = true;
-      rows.forEach(row => {
-        const inputs = row.querySelectorAll('textarea');
+      blocs.forEach(bloc => {
+        const inputs = bloc.querySelectorAll('textarea');
         inputs.forEach(input => {
           if (!input.value.trim()) {
             allFilled = false;
@@ -401,8 +392,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return false;
       }
       const data = [];
-      rows.forEach(row => {
-        const inputs = row.querySelectorAll('textarea');
+      blocs.forEach(bloc => {
+        const inputs = bloc.querySelectorAll('textarea');
         const item = {};
         inputs.forEach(input => {
           item[input.name.replace('[]', '')] = input.value;

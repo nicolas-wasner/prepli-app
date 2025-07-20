@@ -194,12 +194,10 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       </div>
       <hr class="my-6 border-gray-200">
       <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>
-      <div class="overflow-x-auto">
-        <table id="deroulement-table" class="min-w-full w-full border border-gray-200 rounded-lg text-sm bg-gray-50">
-          <tbody></tbody>
-        </table>
+      <div id="deroulement-list" class="space-y-4 mb-4"></div>
+      <div class="flex justify-center mb-8">
+        <button type="button" onclick="addDeroulementRow()" class="px-4 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700 transition">➕ Ajouter une ligne</button>
       </div>
-      <button type="button" onclick="addDeroulementRow()" class="mt-4 mb-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">➕ Ajouter une ligne</button>
       <input type="hidden" name="deroulement_json" id="deroulement_json">
       <div class="flex justify-end mt-8">
         <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">💾 Enregistrer la fiche</button>
@@ -256,14 +254,9 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
     });
 
     function addDeroulementRow(data = {}) {
-      const table = document.querySelector('#deroulement-table tbody');
-      const row = document.createElement('tr');
-      // On va utiliser une seule cellule qui contient toute la structure UX
-      const cell = document.createElement('td');
-      cell.colSpan = 8;
-      // Bloc principal
+      const list = document.getElementById('deroulement-list');
       const bloc = document.createElement('div');
-      bloc.className = 'space-y-2 border rounded-lg p-3 bg-white mb-2 shadow';
+      bloc.className = 'bg-white rounded-lg shadow p-4 mb-2';
       // Ligne 1 : 3 champs côte à côte
       const ligne1 = document.createElement('div');
       ligne1.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
@@ -313,25 +306,42 @@ $deroulement_data = json_decode($fiche['deroulement_json'] ?? '[]', true);
       btnGroup.className = 'flex items-end justify-end mt-2';
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded flex items-center justify-center ml-2';
+      btn.className = 'w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded flex items-center justify-center ml-2';
       btn.innerText = '🗑️';
-      btn.onclick = function() { bloc.closest('tr').remove(); };
+      btn.onclick = function() { bloc.remove(); };
       btnGroup.appendChild(btn);
       ligne2.appendChild(btnGroup);
       bloc.appendChild(ligne2);
-      cell.appendChild(bloc);
-      row.appendChild(cell);
-      table.appendChild(row);
+      list.appendChild(bloc);
     }
 
     const deroulement_initial = <?= json_encode($deroulement_data) ?>;
     deroulement_initial.forEach(data => addDeroulementRow(data));
 
     document.querySelector('form').addEventListener('submit', function (e) {
-      const rows = document.querySelectorAll('#deroulement-table tbody tr');
+      const blocs = document.querySelectorAll('#deroulement-list > div');
+      if (blocs.length === 0) {
+        alert('Veuillez ajouter au moins une ligne de déroulement de séance.');
+        e.preventDefault();
+        return false;
+      }
+      let allFilled = true;
+      blocs.forEach(bloc => {
+        const inputs = bloc.querySelectorAll('textarea');
+        inputs.forEach(input => {
+          if (!input.value.trim()) {
+            allFilled = false;
+          }
+        });
+      });
+      if (!allFilled) {
+        alert('Veuillez remplir tous les champs du déroulement de séance.');
+        e.preventDefault();
+        return false;
+      }
       const data = [];
-      rows.forEach(row => {
-        const inputs = row.querySelectorAll('textarea');
+      blocs.forEach(bloc => {
+        const inputs = bloc.querySelectorAll('textarea');
         const item = {};
         inputs.forEach(input => {
           item[input.name.replace('[]', '')] = input.value;
