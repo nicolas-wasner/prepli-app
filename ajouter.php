@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <option value="Construire les premiers outils pour structurer sa pensée">Construire les premiers outils pour structurer sa pensée</option>
             <option value="Explorer le monde">Explorer le monde</option>
           </optgroup>
-          <optgroup label="École élémentaire et collège (cycle 2 à 4)">
+          <optgroup label="École élémentaire et collège (cycle 2 à 3)">
             <option value="Les langages pour penser et communiquer">Les langages pour penser et communiquer</option>
             <option value="Les méthodes et outils pour apprendre">Les méthodes et outils pour apprendre</option>
             <option value="La formation de la personne et du citoyen">La formation de la personne et du citoyen</option>
@@ -174,9 +174,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label class="block mb-2 font-semibold text-gray-700">Prérequis :
         <textarea name="prerequis" placeholder="Prérequis" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
-      <label class="block mb-2 font-semibold text-gray-700">Nom de l'enseignant :
-        <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </label>
       <label class="block mb-2 font-semibold text-gray-700">Modalités d'évaluation :
         <textarea name="evaluation" placeholder="Modalités d'évaluation" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
       </label>
@@ -188,6 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </label>
       <label class="block mb-2 font-semibold text-gray-700">Remédiation(s) éventuelle(s) :
         <textarea name="remediation" placeholder="Remédiation(s) éventuelle(s)" class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+      </label>
+      <label class="block mb-2 font-semibold text-gray-700">Nom de l'enseignant :
+        <input type="text" name="nom_enseignant" placeholder="Nom de l'enseignant" required class="w-full mt-1 p-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
       </label>
 
       <h3 class="text-lg font-bold text-gray-800 mb-2">Déroulement de la séance</h3>
@@ -327,7 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       const rows = document.querySelectorAll('#deroulement-table tbody tr');
       const data = [];
       rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
+        const inputs = row.querySelectorAll('textarea'); // Correction ici
         const item = {};
         inputs.forEach(input => {
           item[input.name.replace('[]', '')] = input.value;
