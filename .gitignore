@@ -3,5 +3,5 @@
 /node_modules/
 /*.zip
 *.log
-/vscode/sftp.json
+/.vscode/sftp.json
 
