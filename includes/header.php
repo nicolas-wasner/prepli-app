@@ -7,8 +7,8 @@ if (session_status() === PHP_SESSION_NONE) {
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
       <div class="flex items-center">
-        <a href="/" class="text-2xl font-extrabold tracking-tight text-white hover:text-blue-200 transition duration-200 flex items-center gap-2">
-          <span class="text-3xl">🏠</span> <span>PrepLi</span>
+        <a href="/" class="">
+          <img src="/img/logo.png" alt="Logo PrepLi" style="max-width: 2.5rem; height: auto;" />
         </a>
       </div>
       <div class="hidden md:flex ml-10 items-baseline space-x-4">

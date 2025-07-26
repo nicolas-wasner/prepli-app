@@ -6,7 +6,7 @@
 <?php include __DIR__ . '/includes/header.php'; ?>
   <div class="flex flex-col items-center justify-center min-h-[80vh] px-4 pt-24 bg-gradient-to-b from-blue-50 to-white">
     <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 mb-4 text-center">PrepLi</h1>
-    <h2 class="text-xl md:text-2xl text-blue-900 font-semibold mb-6 text-center">La plateforme moderne pour préparer, organiser et exporter vos séances et séquences pédagogiques</h2>
+    <h2 class="text-xl md:text-2xl text-blue-900 font-semibold mb-6 text-center">The plateforme moderne pour préparer, organiser et exporter vos séances et séquences pédagogiques</h2>
     <p class="max-w-2xl text-lg text-gray-700 text-center mb-8">
       Gagnez du temps dans la préparation de vos cours, centralisez vos fiches et séquences, collaborez et exportez vos documents en PDF ou Word en un clic. PrepLi simplifie la vie des enseignants du primaire et du secondaire avec une interface intuitive et des outils puissants.
     </p>
@@ -21,8 +21,6 @@
       <a href="/login" class="block bg-gray-200 hover:bg-gray-300 text-blue-700 py-3 px-6 rounded-lg text-lg font-semibold text-center shadow transition w-full md:w-auto">🔐 Connexion</a>
     </div>
   </div>
-  <footer class="w-full text-center text-gray-400 text-sm py-4 bg-transparent absolute bottom-0 left-0">
-    &copy; <?= date('Y') ?> PrepLi – Facilitez votre préparation pédagogique
-  </footer>
+<?php include_once 'includes/footer.php'; ?>
 </body>
 </html>

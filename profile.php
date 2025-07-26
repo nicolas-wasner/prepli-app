@@ -42,5 +42,6 @@ $nbSequences = $stmt->fetchColumn();
       <div class="text-sm text-yellow-700">Limite : 1 fiche(s) et 1 séquence(s) maximum par utilisateur.</div>
     </div>
   </div>
+<?php include_once 'includes/footer.php'; ?>
 </body>
 </html> 

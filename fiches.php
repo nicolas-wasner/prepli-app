@@ -103,5 +103,6 @@ $limiteFiche = $nbFiches >= $limiteFiches;
   <?php endif; ?>
 </div>
 
+<?php include_once 'includes/footer.php'; ?>
 </body>
 </html>

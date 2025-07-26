@@ -12,5 +12,6 @@ http_response_code(404);
     <p class="text-center">La page que vous cherchez n'existe pas ou a été déplacée.</p>
     <p class="text-center"><a href="/" class="text-blue-600 hover:underline">← Retour à l'accueil</a></p>
   </div>
+  <?php include_once 'includes/footer.php'; ?>
 </body>
 </html>
